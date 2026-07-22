@@ -21,3 +21,15 @@ website/test-results/
 # Go
 *.test
 *.out
+
+# Build artifacts
+website/node_modules/
+website/dist/
+cmd/onepass/onepass-server
+onepass-server
+*.zip
+*.tar.gz
+.DS_Store
+
+# Bundle
+*.bundle
