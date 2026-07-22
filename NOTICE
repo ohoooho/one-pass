@@ -1,0 +1,27 @@
+one-pass
+Copyright 2026 ohoooho contributors
+
+This product includes software developed at
+The ohoooho organization (https://ohoooho.com/).
+
+This product is a fork of jhaals/yopass (https://github.com/jhaals/yopass),
+which is licensed under the Apache License, Version 2.0.
+
+================================================================================
+Forked project: jhaals/yopass
+Original authors: jhaals and Yopass contributors
+License: Apache License 2.0
+Fork purpose: zero-knowledge secret sharing with a transparent UI that lets
+  end users SEE the encryption happen in their browser (red key box + green
+  ciphertext box), to combat user distrust of "encrypted" services.
+Modifications:
+  - Rebranded: Yopass -> one-pass
+  - Domain: https://one-pass.ohoooho.com
+  - Default language: zh-CN (Chinese); English retained as fallback
+  - New /about page with hard evidence the server cannot see plaintext
+  - Created 4-step encrypt UI (key + ciphertext visible BEFORE submit)
+  - Created 2-step decrypt UI (ciphertext + key visible BEFORE decrypt)
+  - Added zero-knowledge promise + residual-risk disclosure
+  - Removed: file upload, requests, receipts, premium features
+  - Deployment: static binary + systemd (no Docker)
+================================================================================

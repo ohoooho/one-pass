@@ -1,0 +1,23 @@
+# Build artifacts
+onepass-server
+onepass-server-*
+node_modules/
+website/dist/
+website/node_modules/
+website/playwright-report/
+website/test-results/
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Local config
+*.local
+
+# Logs
+*.log
+
+# Go
+*.test
+*.out

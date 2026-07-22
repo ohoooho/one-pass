@@ -1,0 +1,321 @@
+package server
+
+import (
+	"context"
+	"errors"
+	"os"
+	"strconv"
+	"sync"
+	"testing"
+
+	"github.com/ohoooho/one-pass/pkg/onepass"
+)
+
+func TestRedis(t *testing.T) {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		t.Skip("Specify REDIS_URL env variable to test Redis database")
+	}
+
+	r, err := NewRedis(redisURL)
+	if err != nil {
+		t.Fatalf("error in NewRedis(): %v", err)
+	}
+
+	key := "f9fa5704-3ed2-4e60-b441-c426d3f9f3c1"
+	secret := onepass.Secret{Message: "foo", OneTime: true}
+
+	err = r.Put(key, secret)
+	if err != nil {
+		t.Fatalf("error in Put(): %v", err)
+	}
+
+	storedVal, err := r.Get(key)
+	if err != nil {
+		t.Fatalf("error in Get(): %v", err)
+	}
+
+	if storedVal.Message != secret.Message {
+		t.Fatalf("expected value %s, got %s", secret.Message, storedVal.Message)
+	}
+
+	_, err = r.Get(key)
+	if err == nil {
+		t.Fatal("expected error from Get() after Delete()")
+	}
+}
+
+func TestRedisUnits(t *testing.T) {
+	t.Run("NewRedis with invalid URL", func(t *testing.T) {
+		_, err := NewRedis("invalid-url")
+		if err == nil {
+			t.Fatal("Expected error for invalid Redis URL")
+		}
+	})
+
+	t.Run("NewRedis with valid URL", func(t *testing.T) {
+		r, err := NewRedis("redis://localhost:6379/0")
+		if err != nil {
+			t.Fatalf("Expected no error for valid Redis URL, got: %v", err)
+		}
+		if r.client == nil {
+			t.Fatal("Client should be initialized")
+		}
+	})
+}
+
+func TestRedisStatus(t *testing.T) {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		t.Skip("Specify REDIS_URL env variable to test Redis database")
+	}
+
+	r, err := NewRedis(redisURL)
+	if err != nil {
+		t.Fatalf("error in NewRedis(): %v", err)
+	}
+
+	t.Run("Status returns correct OneTime value for existing secret", func(t *testing.T) {
+		key := "test-status-onetime"
+		secret := onepass.Secret{Message: "test message", OneTime: true, Expiration: 3600}
+
+		// Put the secret
+		err := r.Put(key, secret)
+		if err != nil {
+			t.Fatalf("error in Put(): %v", err)
+		}
+
+		// Check status
+		s, err := r.Status(key)
+		if err != nil {
+			t.Fatalf("error in Status(): %v", err)
+		}
+
+		if s.OneTime != true {
+			t.Fatalf("expected OneTime to be true, got %v", s.OneTime)
+		}
+
+		// Clean up
+		r.Delete(key)
+	})
+
+	t.Run("Status returns correct OneTime value for non-onetime secret", func(t *testing.T) {
+		key := "test-status-multi"
+		secret := onepass.Secret{Message: "test message", OneTime: false, Expiration: 3600}
+
+		// Put the secret
+		err := r.Put(key, secret)
+		if err != nil {
+			t.Fatalf("error in Put(): %v", err)
+		}
+
+		// Check status
+		s, err := r.Status(key)
+		if err != nil {
+			t.Fatalf("error in Status(): %v", err)
+		}
+
+		if s.OneTime != false {
+			t.Fatalf("expected OneTime to be false, got %v", s.OneTime)
+		}
+
+		// Clean up
+		r.Delete(key)
+	})
+
+	t.Run("Status returns error for non-existent key", func(t *testing.T) {
+		key := "non-existent-key"
+
+		// Check status for non-existent key
+		_, err := r.Status(key)
+		if err == nil {
+			t.Fatal("expected error for non-existent key")
+		}
+
+		// Should return redis.Nil
+		if err.Error() != "redis: nil" {
+			t.Fatalf("expected redis nil error, got: %v", err)
+		}
+	})
+
+	t.Run("Status works after secret is deleted by Get (OneTime)", func(t *testing.T) {
+		key := "test-status-deleted"
+		secret := onepass.Secret{Message: "test message", OneTime: true, Expiration: 3600}
+
+		// Put the secret
+		err := r.Put(key, secret)
+		if err != nil {
+			t.Fatalf("error in Put(): %v", err)
+		}
+
+		// Verify status before Get
+		s, err := r.Status(key)
+		if err != nil {
+			t.Fatalf("error in Status(): %v", err)
+		}
+		if s.OneTime != true {
+			t.Fatalf("expected OneTime to be true, got %v", s.OneTime)
+		}
+
+		// Get the secret (should delete it since OneTime=true)
+		_, err = r.Get(key)
+		if err != nil {
+			t.Fatalf("error in Get(): %v", err)
+		}
+
+		// Status should now return error since secret was deleted
+		_, err = r.Status(key)
+		if err == nil {
+			t.Fatal("expected error for deleted secret")
+		}
+	})
+
+	t.Run("Status preserves secret for non-onetime access", func(t *testing.T) {
+		key := "test-status-preserved"
+		secret := onepass.Secret{Message: "test message", OneTime: false, Expiration: 3600}
+
+		// Put the secret
+		err := r.Put(key, secret)
+		if err != nil {
+			t.Fatalf("error in Put(): %v", err)
+		}
+
+		// Check status multiple times
+		for i := 0; i < 3; i++ {
+			s, err := r.Status(key)
+			if err != nil {
+				t.Fatalf("error in Status() on iteration %d: %v", i, err)
+			}
+			if s.OneTime != false {
+				t.Fatalf("expected OneTime to be false on iteration %d, got %v", i, s.OneTime)
+			}
+		}
+
+		// Clean up
+		r.Delete(key)
+	})
+
+	t.Run("Status handles malformed JSON data", func(t *testing.T) {
+		// This test directly puts malformed data to test error handling
+		redisClient := r.client
+		key := "test-status-malformed"
+
+		// Put malformed JSON directly
+		err := redisClient.Set(context.Background(), key, "invalid-json", 0).Err()
+		if err != nil {
+			t.Fatalf("error setting malformed data: %v", err)
+		}
+
+		// Status should return JSON unmarshal error
+		_, err = r.Status(key)
+		if err == nil {
+			t.Fatal("expected error for malformed JSON")
+		}
+
+		// Clean up
+		r.Delete(key)
+	})
+}
+
+func TestRedisHealth(t *testing.T) {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		t.Skip("Specify REDIS_URL env variable to test Redis database")
+	}
+
+	r, err := NewRedis(redisURL)
+	if err != nil {
+		t.Fatalf("error in NewRedis(): %v", err)
+	}
+
+	t.Run("Health returns nil when Redis is available", func(t *testing.T) {
+		err := r.Health()
+		if err != nil {
+			t.Fatalf("expected Health() to succeed, got error: %v", err)
+		}
+	})
+
+	t.Run("Health returns error when Redis is unavailable", func(t *testing.T) {
+		badRedis, err := NewRedis("redis://invalid-host:9999/0")
+		if err != nil {
+			t.Fatalf("error creating Redis client: %v", err)
+		}
+
+		err = badRedis.Health()
+		if err == nil {
+			t.Fatal("expected Health() to fail with invalid Redis connection")
+		}
+	})
+}
+
+func TestRedisUpdate(t *testing.T) {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		t.Skip("Specify REDIS_URL env variable to test Redis database")
+	}
+
+	r, err := NewRedis(redisURL)
+	if err != nil {
+		t.Fatalf("error in NewRedis(): %v", err)
+	}
+
+	key := "update-test-" + t.Name()
+	defer func() { _, _ = r.Delete(key) }()
+
+	// Update of a missing key reports ErrKeyNotFound
+	if err := r.Update(key, func(s onepass.Secret) (onepass.Secret, error) {
+		return s, nil
+	}); err != ErrKeyNotFound {
+		t.Fatalf("expected ErrKeyNotFound, got %v", err)
+	}
+
+	if err := r.Put(key, onepass.Secret{Message: "0", Expiration: 3600}); err != nil {
+		t.Fatalf("error in Put(): %v", err)
+	}
+
+	// An error returned by fn aborts the update without writing
+	abort := errors.New("abort")
+	if err := r.Update(key, func(s onepass.Secret) (onepass.Secret, error) {
+		s.Message = "must not be stored"
+		return s, abort
+	}); err != abort {
+		t.Fatalf("expected abort error, got %v", err)
+	}
+	if s, err := r.Status(key); err != nil || s.Message != "0" {
+		t.Fatalf("aborted update must not write: %v %v", s, err)
+	}
+
+	// Concurrent increments must all land exactly once
+	const writers = 10
+	var wg sync.WaitGroup
+	for i := 0; i < writers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				err := r.Update(key, func(s onepass.Secret) (onepass.Secret, error) {
+					n, err := strconv.Atoi(s.Message)
+					if err != nil {
+						return s, err
+					}
+					s.Message = strconv.Itoa(n + 1)
+					return s, nil
+				})
+				if err == nil {
+					return
+				}
+				// Retries are bounded per Update call; loop until this
+				// writer's increment lands.
+			}
+		}()
+	}
+	wg.Wait()
+
+	s, err := r.Status(key)
+	if err != nil {
+		t.Fatalf("error in Status(): %v", err)
+	}
+	if s.Message != strconv.Itoa(writers) {
+		t.Fatalf("lost updates: expected %d, got %s", writers, s.Message)
+	}
+}

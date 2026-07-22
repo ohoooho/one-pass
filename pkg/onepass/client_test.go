@@ -1,0 +1,271 @@
+package onepass_test
+
+import (
+	"errors"
+	"fmt"
+	"net/http/httptest"
+	"testing"
+
+	"go.uber.org/zap/zaptest"
+
+	"github.com/ohoooho/one-pass/pkg/server"
+	"github.com/ohoooho/one-pass/pkg/onepass"
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+func newTestServer(t *testing.T, db server.Database) (*httptest.Server, func()) {
+	y := server.Server{
+		DB:                  db,
+		FileStore:           server.NewDatabaseFileStore(db),
+		MaxLength:           10000,
+		MaxFileSize:         10 * 1024 * 1024,
+		Registry:            prometheus.NewRegistry(),
+		ForceOneTimeSecrets: false,
+		Logger:              zaptest.NewLogger(t),
+	}
+	ts := httptest.NewServer(y.HTTPHandler())
+	return ts, func() { ts.Close() }
+}
+
+func TestFetch(t *testing.T) {
+	db := testDB(map[string]string{})
+	ts, cleanup := newTestServer(t, &db)
+	defer cleanup()
+
+	key := "4b9502b0-112a-40f5-a872-956250e81f6c"
+	msg := `-----BEGIN PGP MESSAGE-----
+Version: OpenPGP.js v4.10.8
+Comment: https://openpgpjs.org
+
+wy4ECQMIRthQ3aO85NvgAfASIX3dTwsFVt0gshPu7n1tN05e8rpqxOk6PYNm
+xtt90k4BqHuTCLNlFRJjuiuE8zdIc+j5zTN5zihxUReVqokeqULLOx2FBMHZ
+sbfqaG/iDbp+qDOc98IagMyPrEqKDxnhVVOraXy5dD9RDsntLso=
+=0vwU
+-----END PGP MESSAGE-----`
+	if err := db.Put(key, onepass.Secret{Message: msg}); err != nil {
+		t.Fatal(err)
+	}
+
+	got, err := onepass.Fetch(ts.URL, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if msg != got {
+		t.Errorf("expected fetched message to be %q, got %q", msg, got)
+	}
+
+	_, err = onepass.Fetch(ts.URL, "4b9502b0-112a-40f5-a872-000000000000")
+	if want := new(onepass.ServerError); !errors.As(err, &want) {
+		t.Errorf("expected a ServerError, got %v", err)
+	}
+}
+
+func TestFetchInvalidServer(t *testing.T) {
+	_, err := onepass.Fetch("127.0.0.1:9999/invalid", "1337")
+	if err == nil {
+		t.Error("expected error, got none")
+	}
+}
+
+func TestStore(t *testing.T) {
+	db := testDB(map[string]string{})
+	ts, cleanup := newTestServer(t, &db)
+	defer cleanup()
+
+	msg := `-----BEGIN PGP MESSAGE-----
+Version: OpenPGP.js v4.10.8
+Comment: https://openpgpjs.org
+
+wy4ECQMIRthQ3aO85NvgAfASIX3dTwsFVt0gshPu7n1tN05e8rpqxOk6PYNm
+xtt90k4BqHuTCLNlFRJjuiuE8zdIc+j5zTN5zihxUReVqokeqULLOx2FBMHZ
+sbfqaG/iDbp+qDOc98IagMyPrEqKDxnhVVOraXy5dD9RDsntLso=
+=0vwU
+-----END PGP MESSAGE-----`
+	id, err := onepass.Store(ts.URL, onepass.Secret{Expiration: 3600, Message: msg})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	got, err := db.Get(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if msg != got.Message {
+		t.Errorf("expected stored message to be %q, got %q", msg, got.Message)
+	}
+}
+
+type testDB map[string]string
+
+func (db *testDB) Exists(key string) (bool, error) {
+	_, ok := (map[string]string(*db))[key]
+	return ok, nil
+}
+
+func (db *testDB) Get(key string) (onepass.Secret, error) {
+	msg, ok := (map[string]string(*db))[key]
+	if !ok {
+		return onepass.Secret{}, fmt.Errorf("secret not found")
+	}
+	return onepass.Secret{Message: msg}, nil
+}
+
+func (db *testDB) Put(key string, secret onepass.Secret) error {
+	(map[string]string(*db))[key] = secret.Message
+	return nil
+}
+
+func (db *testDB) Delete(key string) (bool, error) {
+	delete((map[string]string(*db)), key)
+	return true, nil
+}
+
+func (db *testDB) Status(key string) (onepass.Secret, error) {
+	msg, ok := (map[string]string(*db))[key]
+	if !ok {
+		return onepass.Secret{}, fmt.Errorf("secret not found")
+	}
+	return onepass.Secret{Message: msg}, nil
+}
+
+func (db *testDB) Update(key string, fn func(onepass.Secret) (onepass.Secret, error)) error {
+	s, err := db.Get(key)
+	if err != nil {
+		return server.ErrKeyNotFound
+	}
+	updated, err := fn(s)
+	if err != nil {
+		return err
+	}
+	return db.Put(key, updated)
+}
+
+func (db *testDB) Health() error {
+	return nil
+}
+
+func TestServerError(t *testing.T) {
+	_, storeErr := onepass.StoreFile("http://127.0.0.1:1/invalid", []byte("x"), 3600, true)
+	var se *onepass.ServerError
+	if !errors.As(storeErr, &se) {
+		t.Fatalf("expected ServerError, got %T: %v", storeErr, storeErr)
+	}
+	if se.Error() == "" {
+		t.Error("expected non-empty error message")
+	}
+	if se.Unwrap() == nil {
+		t.Error("expected non-nil unwrapped error")
+	}
+}
+
+func TestStoreFile(t *testing.T) {
+	db := testDB(map[string]string{})
+	ts, cleanup := newTestServer(t, &db)
+	defer cleanup()
+
+	id, err := onepass.StoreFile(ts.URL, append([]byte{0xC3}, []byte("encrypted-binary-data")...), 3600, true)
+	if err != nil {
+		t.Fatalf("StoreFile failed: %v", err)
+	}
+	if id == "" {
+		t.Fatal("expected non-empty ID")
+	}
+}
+
+func TestFetchFile(t *testing.T) {
+	db := testDB(map[string]string{})
+	ts, cleanup := newTestServer(t, &db)
+	defer cleanup()
+
+	// Upload first (prefix with 0xC3 SKESK tag for OpenPGP validation)
+	payload := append([]byte{0xC3}, []byte("encrypted-data")...)
+	id, err := onepass.StoreFile(ts.URL, payload, 3600, false)
+	if err != nil {
+		t.Fatalf("StoreFile failed: %v", err)
+	}
+
+	// Download; filename is embedded in OpenPGP metadata and obtained via Decrypt()
+	body, err := onepass.FetchFile(ts.URL, id)
+	if err != nil {
+		t.Fatalf("FetchFile failed: %v", err)
+	}
+	if string(body) != string(payload) {
+		t.Errorf("expected payload back, got %x", body)
+	}
+}
+
+func TestFetchFileNotFound(t *testing.T) {
+	db := testDB(map[string]string{})
+	ts, cleanup := newTestServer(t, &db)
+	defer cleanup()
+
+	_, err := onepass.FetchFile(ts.URL, "00000000-0000-0000-0000-000000000000")
+	if err == nil {
+		t.Fatal("expected error for nonexistent file")
+	}
+	var serverErr *onepass.ServerError
+	if !errors.As(err, &serverErr) {
+		t.Fatalf("expected ServerError, got %T: %v", err, err)
+	}
+	// Test Unwrap
+	if serverErr.Unwrap() == nil {
+		t.Error("expected non-nil unwrapped error")
+	}
+}
+
+func TestFetchServerConfig(t *testing.T) {
+	for _, argon2 := range []bool{false, true} {
+		db := testDB(map[string]string{})
+		y := server.Server{
+			DB:        &db,
+			FileStore: server.NewDatabaseFileStore(&db),
+			MaxLength: 10000,
+			Registry:  prometheus.NewRegistry(),
+			Logger:    zaptest.NewLogger(t),
+			Argon2:    argon2,
+		}
+		ts := httptest.NewServer(y.HTTPHandler())
+		defer ts.Close()
+
+		config, err := onepass.FetchServerConfig(ts.URL)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+		if config.Argon2 != argon2 {
+			t.Errorf("expected Argon2 to be %v, got %v", argon2, config.Argon2)
+		}
+	}
+}
+
+func TestFetchServerConfigError(t *testing.T) {
+	_, err := onepass.FetchServerConfig("http://127.0.0.1:1/invalid")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	var serverErr *onepass.ServerError
+	if !errors.As(err, &serverErr) {
+		t.Fatalf("expected ServerError, got %T", err)
+	}
+}
+
+func TestStoreFileServerError(t *testing.T) {
+	_, err := onepass.StoreFile("http://127.0.0.1:1/invalid", []byte("data"), 3600, true)
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	var serverErr *onepass.ServerError
+	if !errors.As(err, &serverErr) {
+		t.Fatalf("expected ServerError, got %T", err)
+	}
+}
+
+func TestFetchFileServerError(t *testing.T) {
+	_, err := onepass.FetchFile("http://127.0.0.1:1/invalid", "test-id")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	var serverErr *onepass.ServerError
+	if !errors.As(err, &serverErr) {
+		t.Fatalf("expected ServerError, got %T", err)
+	}
+}

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onepass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: onepass
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: onepass
+    spec:
+      containers:
+        - name: onepass
+          image: jhaals/onepass
+          args:
+            - "--memcached=localhost:11211"
+          ports:
+            - name: http
+              containerPort: 1337
+          resources:
+            limits:
+              cpu: 100m
+              memory: 50Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+        - name: onepass-memcached
+          image: memcached
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          args:
+            - "-m 64"
+          ports:
+            - name: memcached
+              containerPort: 11211
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: onepass
+spec:
+  selector:
+    app.kubernetes.io/name: onepass
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 1337
