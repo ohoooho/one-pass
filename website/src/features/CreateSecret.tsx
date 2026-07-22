@@ -9,6 +9,7 @@ import { useSecretForm } from '@shared/hooks/useSecretForm';
 import { SecretOptions } from '@shared/components/SecretOptions';
 import { CiphertextBox } from '@shared/components/CiphertextBox';
 import { KeyBox } from '@shared/components/KeyBox';
+import { InfoPopover } from '@shared/components/InfoPopover';
 import { randomString } from '@shared/lib/random';
 import Result from '@features/display-secret/Result';
 
@@ -213,6 +214,11 @@ export default function CreateSecret() {
             <h3 className="font-semibold text-base m-0">
               {t('create.step2Title')}
             </h3>
+            <InfoPopover
+              titleKey="create.infoA1Title"
+              bodyKey="create.infoA1Body"
+              learnMoreKey="create.infoLearnMore"
+            />
           </div>
           <KeyBox
             password={effectiveKey}
@@ -239,6 +245,11 @@ export default function CreateSecret() {
             <h3 className="font-semibold text-base m-0">
               {t('create.step3Title')}
             </h3>
+            <InfoPopover
+              titleKey="create.infoA2Title"
+              bodyKey="create.infoA2Body"
+              learnMoreKey="create.infoLearnMore"
+            />
           </div>
           <CiphertextBox
             ciphertext={liveCipher}
@@ -291,6 +302,11 @@ export default function CreateSecret() {
               />
             </svg>
             {t('create.buttonEncrypt')}
+            <InfoPopover
+              titleKey="create.infoA6Title"
+              bodyKey="create.infoA6Body"
+              className="ml-2"
+            />
           </button>
         </div>
       </form>

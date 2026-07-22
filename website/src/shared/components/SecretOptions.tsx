@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { useConfig } from '@shared/hooks/useConfig';
+import { InfoPopover } from '@shared/components/InfoPopover';
 
 type SecretFormFields = {
   expiration: string;
@@ -67,9 +68,16 @@ export function SecretOptions<T extends SecretFormFields>({
     <>
       <fieldset className="form-control mt-6">
         {!forcedExpirationLabel && (
-          <legend className="label-text font-semibold text-base text-balance">
-            {expirationLabel || t('expiration.legend')}
-          </legend>
+          <div className="flex items-center gap-1.5">
+            <legend className="label-text font-semibold text-base text-balance">
+              {expirationLabel || t('expiration.legend')}
+            </legend>
+            <InfoPopover
+              titleKey="create.infoA5Title"
+              bodyKey="create.infoA5Body"
+              side="right"
+            />
+          </div>
         )}
         {forcedExpirationLabel ? (
           <p className="mt-2 text-sm font-medium text-base-content/70">
@@ -109,6 +117,11 @@ export function SecretOptions<T extends SecretFormFields>({
               <span className="label-text font-medium">
                 {t('create.inputOneTimeLabel')}
               </span>
+              <InfoPopover
+                titleKey="create.infoA3Title"
+                bodyKey="create.infoA3Body"
+                side="right"
+              />
             </label>
           )}
           <label className="cursor-pointer flex items-center space-x-3 p-2 rounded-md hover:bg-base-200 transition-colors">
@@ -122,6 +135,11 @@ export function SecretOptions<T extends SecretFormFields>({
             <span className="label-text font-medium">
               {t('create.inputGenerateKeyLabel')}
             </span>
+            <InfoPopover
+              titleKey="create.infoA4Title"
+              bodyKey="create.infoA4Body"
+              side="right"
+            />
           </label>
           {config?.OIDC_ENABLED && (
             <label className="cursor-pointer flex items-center space-x-3 p-2 rounded-md hover:bg-base-200 transition-colors">

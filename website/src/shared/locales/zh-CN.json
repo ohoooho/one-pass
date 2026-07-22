@@ -13,7 +13,20 @@
     "inputOneTimeLabel": "阅后即焚（只能打开一次）",
     "inputGenerateKeyLabel": "随机生成密钥",
     "inputRequireAuthLabel": "需要登录才能打开",
-    "inputReadReceiptLabel": "读取回执（追踪消息是否被查看）"
+    "inputReadReceiptLabel": "读取回执（追踪消息是否被查看）",
+    "infoLearnMore": "了解更多",
+    "infoA1Title": "这个密钥是什么？",
+    "infoA1Body": "密钥是浏览器随机生成的 24 位字符串（AES-256 强度）。它从不出现在任何网络请求里——浏览器通过 URL # 后面的 fragment 传递它，而 HTTP 协议保证 fragment 不到服务端（RFC 3986 §3.5）。\n\n你只需把生成的链接发给对方，对方在浏览器里用同样的密钥解密。整个过程服务端没有密钥 → 无法解密。",
+    "infoA2Title": "为什么只传密文是安全的？",
+    "infoA2Body": "密文是明文经过 OpenPGP 加密后的产物。没有密钥，密文就是一堆随机字节。服务端收到的是这段密文，没有密钥就无法还原明文。\n\n这与普通 HTTPS 不同：HTTPS 只保护传输过程，服务器仍能读明文；而这里服务端从一开始就拿不到明文（端到端加密）。",
+    "infoA3Title": "阅后即焚的精确含义",
+    "infoA3Body": "勾选后，密文只能被解密一次：首次解密后服务端立刻删除，链接立即失效。\n\n注意：① 刷新页面等于重新打开，会触发销毁；② 复制粘贴明文到别处不归我们管；③ 这是「阅后即焚」不是「阅后自动消失」，务必立刻保存明文。",
+    "infoA4Title": "随机 vs 自定义密钥",
+    "infoA4Body": "默认推荐随机生成——使用 crypto.getRandomValues() 生成 24 字符熵，远超人脑能记住的程度。\n\n自定义密钥（关闭本项并输入）适合：① 你想自己记住一个短语而非对方收密钥；② 你用自己常用的密码短语。但注意短密钥会被 argon2 拉伸后用，弱密钥会降低实际安全性。",
+    "infoA5Title": "过期时间从何时开始算？",
+    "infoA5Body": "从你点击「生成一次性分享链接」那一刻开始计时，不是从对方首次打开开始。\n\n例如选 1 小时 → 链接 1 小时后过期，无论是否被查看。如果你想让链接有 24 小时等待期再选 1 天。",
+    "infoA6Title": "链接长什么样？",
+    "infoA6Body": "完整链接形如：\n\n  https://one-pass.ohoooho.com/s/abc123#Y6d7737DKcgo2jU4YvE4s7\n\n- 域名/s/abc123：one-pass 上密文的存储地址\n- #Y6d7737DKcgo2jU4YvE4s7：URL 末尾的密钥\n\n把整段链接发给对方即可。建议把链接和密钥分两个渠道发送（链接 IM，密钥电话）以降低被截获的风险。"
   },
   "upload": {
     "title": "上传文件",
