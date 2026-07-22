@@ -9,6 +9,19 @@ export interface TranslationResources {
     inputCustomPasswordPlaceholder: string;
     inputOneTimeLabel: string;
     inputGenerateKeyLabel: string;
+    infoLearnMore: string;
+    infoA1Title: string;
+    infoA1Body: string;
+    infoA2Title: string;
+    infoA2Body: string;
+    infoA3Title: string;
+    infoA3Body: string;
+    infoA4Title: string;
+    infoA4Body: string;
+    infoA5Title: string;
+    infoA5Body: string;
+    infoA6Title: string;
+    infoA6Body: string;
   };
   upload: {
     title: string;
