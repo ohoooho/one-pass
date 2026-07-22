@@ -22,6 +22,29 @@ export interface TranslationResources {
     infoA5Body: string;
     infoA6Title: string;
     infoA6Body: string;
+    tabsLabel: string;
+    tabText: string;
+    tabFile: string;
+    fileMode: {
+      title: string;
+      subtitle: string;
+      helpTitle: string;
+      helpIntro: string;
+      helpSizeNote: string;
+      dropzoneText: string;
+      maxFileSize: string;
+      ciphertextLabel: string;
+      ciphertextPlaceholder: string;
+      ciphertextSize: string;
+      keyLabel: string;
+      keyPlaceholder: string;
+      keyHint: string;
+      expirationLabel: string;
+      submit: string;
+      errorNoCiphertext: string;
+      errorNoKey: string;
+      errorTooLargeForServer: string;
+    };
   };
   upload: {
     title: string;
