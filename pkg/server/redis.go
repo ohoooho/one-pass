@@ -1,0 +1,133 @@
+package server
+
+import (
+	"context"
+	"encoding/json"
+	"time"
+
+	"github.com/ohoooho/one-pass/pkg/onepass"
+	"github.com/redis/go-redis/v9"
+)
+
+// NewRedis returns a new Redis database client
+func NewRedis(url string) (*Redis, error) {
+	options, err := redis.ParseURL(url)
+	if err != nil {
+		return nil, err
+	}
+	return &Redis{redis.NewClient(options)}, nil
+}
+
+// Redis client
+type Redis struct {
+	client *redis.Client
+}
+
+// Status returns secret metadata without deleting it (safe for one-time secrets).
+func (r *Redis) Status(key string) (onepass.Secret, error) {
+	var s onepass.Secret
+	v, err := r.client.Get(context.Background(), key).Result()
+	if err == redis.Nil {
+		return s, redis.Nil
+	}
+	if err != nil {
+		return s, err
+	}
+	if err := json.Unmarshal([]byte(v), &s); err != nil {
+		return s, err
+	}
+	return s, nil
+}
+
+// Get key from Redis
+func (r *Redis) Get(key string) (onepass.Secret, error) {
+	var s onepass.Secret
+	v, err := r.client.Get(context.Background(), key).Result()
+	if err != nil {
+		return s, err
+	}
+
+	if err := json.Unmarshal([]byte(v), &s); err != nil {
+		return s, err
+	}
+
+	if s.OneTime {
+		_, err := r.Delete(key)
+		if err != nil {
+			return s, err
+		}
+	}
+	return s, nil
+}
+
+// Put key to Redis
+func (r *Redis) Put(key string, secret onepass.Secret) error {
+	data, err := secret.ToJSON()
+	if err != nil {
+		return err
+	}
+	return r.client.Set(
+		context.Background(),
+		key,
+		data,
+		time.Duration(secret.Expiration)*time.Second,
+	).Err()
+}
+
+// updateRetries bounds the number of attempts an Update makes when it loses a
+// compare-and-swap race before giving up.
+const updateRetries = 5
+
+// Update atomically applies fn to the value at key using an optimistic
+// WATCH/MULTI/EXEC transaction, retrying on contention.
+func (r *Redis) Update(key string, fn func(onepass.Secret) (onepass.Secret, error)) error {
+	ctx := context.Background()
+	var lastErr error
+	for i := 0; i < updateRetries; i++ {
+		err := r.client.Watch(ctx, func(tx *redis.Tx) error {
+			v, err := tx.Get(ctx, key).Result()
+			if err == redis.Nil {
+				return ErrKeyNotFound
+			}
+			if err != nil {
+				return err
+			}
+			var s onepass.Secret
+			if err := json.Unmarshal([]byte(v), &s); err != nil {
+				return err
+			}
+			updated, err := fn(s)
+			if err != nil {
+				return err
+			}
+			data, err := updated.ToJSON()
+			if err != nil {
+				return err
+			}
+			_, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+				pipe.Set(ctx, key, data, time.Duration(updated.Expiration)*time.Second)
+				return nil
+			})
+			return err
+		}, key)
+		if err != redis.TxFailedErr {
+			return err
+		}
+		lastErr = err
+	}
+	return lastErr
+}
+
+// Delete key from Redis
+func (r *Redis) Delete(key string) (bool, error) {
+	res, err := r.client.Del(context.Background(), key).Result()
+	if err != nil {
+		return false, err
+	}
+	return res == 1, nil
+}
+
+// Health checks Redis connectivity using PING command
+func (r *Redis) Health() error {
+	return r.client.Ping(context.Background()).Err()
+}
