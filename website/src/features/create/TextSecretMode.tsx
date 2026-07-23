@@ -8,6 +8,7 @@ import { useConfig } from '@shared/hooks/useConfig';
 import { CiphertextBox } from '@shared/components/CiphertextBox';
 import { StepBar } from '@shared/components/StepBar';
 import { randomString } from '@shared/lib/random';
+import { ShieldIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
 import { PlaintextStep } from './PlaintextStep';
 import { KeyStep } from './KeyStep';
@@ -20,26 +21,25 @@ type Secret = {
   secret: string;
   expiration: string;
   oneTime: boolean;
-  generateKey: boolean;
-  customPassword: string;
 };
 
 /**
- * 4-step transparent encryption UI for plain text — v0.2 layout.
+ * 4-step transparent encryption UI for plain text — v3 layout (2026-07-23).
  *
- *  Desktop (≥768px): two columns
- *    ┌─ left 1/3 ──────┐ ┌─ right 2/3 ─────────┐
- *    │  stepper        │ │  1 plaintext        │
- *    │  explainer      │ │  2 key              │
- *    │                 │ │  3 ciphertext       │
- *    │                 │ │  options            │
- *    │                 │ │  [encrypt button]   │
- *    └─────────────────┘ └─────────────────────┘
+ * v3 redesign: removed left sidebar (was wasting 1/3 of 1920 viewport on
+ * "zero-knowledge" copy that users don't need to read). Now single-column:
  *
- *  Mobile (<768px): stacked single column.
+ *   hero band (centered title + subtitle)
+ *   horizontal stepper (4 steps, full-width)
+ *   action card (full-width, max-w-5xl)
+ *     ① plaintext
+ *     ② key choice + key box
+ *     ③ ciphertext preview
+ *     ④ options
+ *     [encrypt button]
+ *     reassurance strip
  *
- * B1 change: encryption only happens on button click. Steps 2 & 3 show
- * a "等待加密" placeholder until then.
+ * Mobile (<768px): stacks to single column. Stepper collapses to compact.
  */
 export default function TextSecretMode() {
   const { t } = useTranslation();
@@ -149,12 +149,26 @@ export default function TextSecretMode() {
 
   return (
     <>
-      <h2 className="text-4xl font-bold mb-2 text-[#3A2E5C] tracking-tight">
-        {t('create.title')}
-      </h2>
-      <p className="text-base text-[#3A2E5C]/70 mb-8">
-        {t('create.subtitle')}
-      </p>
+      {/* ── Hero band: title + subtitle ─────────────────────────── */}
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-[#3A2E5C] tracking-tight">
+          {t('create.title')}
+        </h2>
+        <p className="text-base sm:text-lg text-[#3A2E5C]/70 max-w-2xl mx-auto leading-relaxed">
+          {t('create.subtitle')}
+        </p>
+      </div>
+
+      <StepBar
+        steps={[
+          { id: 1, title: t('create.stepTitle1'), hint: t('create.stepHint1') },
+          { id: 2, title: t('create.stepTitle2'), hint: t('create.stepHint2') },
+          { id: 3, title: t('create.stepTitle3'), hint: t('create.stepHint3') },
+          { id: 4, title: t('create.stepTitle4'), hint: t('create.stepHint4') },
+        ]}
+        current={stepIndex}
+        className="mb-8 sm:mb-10"
+      />
 
       {errors.secret && (
         <div className="mb-4 text-[#B91C1C] text-sm font-medium">
@@ -175,129 +189,83 @@ export default function TextSecretMode() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        {/* LEFT — stepper + explainer (sticky on lg) */}
-        <aside className="lg:col-span-4 lg:sticky lg:top-20 order-2 lg:order-1">
-          <StepBar
-            steps={[
-              { id: 1, title: t('create.stepTitle1'), hint: t('create.stepHint1') },
-              { id: 2, title: t('create.stepTitle2'), hint: t('create.stepHint2') },
-              { id: 3, title: t('create.stepTitle3'), hint: t('create.stepHint3') },
-              { id: 4, title: t('create.stepTitle4'), hint: t('create.stepHint4') },
-            ]}
-            current={stepIndex}
-            className="mb-6"
+      {/* ── Action card — single column, generous spacing ──────── */}
+      <div
+        className="rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm"
+        style={{
+          background:
+            'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+          border: '1.5px solid #E0E6F0',
+        }}
+      >
+        <div className="space-y-7 sm:space-y-9">
+          <PlaintextStep
+            value={plaintext}
+            onChange={(v) => {
+              setValue('secret', v, { shouldValidate: false, shouldDirty: true });
+            }}
+            registration={register('secret')}
+            error={errors.secret?.message?.toString()}
           />
-          <div
-            className="rounded-2xl p-5"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(165, 216, 255, 0.18) 0%, rgba(184, 230, 193, 0.18) 100%)',
-              border: '1.5px solid rgba(165, 216, 255, 0.4)',
-            }}
-          >
-            <h3 className="font-semibold text-base mb-2 text-[#3A2E5C] flex items-center gap-2">
-              <span aria-hidden="true">🛡️</span>
-              {t('create.explainerTitle')}
-            </h3>
-            <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mb-2">
-              {t('create.explainerBody')}
-            </p>
-            <ul className="text-xs text-[#3A2E5C]/60 space-y-1.5 mt-3">
-              <li className="flex gap-2">
-                <span aria-hidden="true">✅</span>
-                <span>{t('create.explainerPoint1')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span aria-hidden="true">✅</span>
-                <span>{t('create.explainerPoint2')}</span>
-              </li>
-              <li className="flex gap-2">
-                <span aria-hidden="true">✅</span>
-                <span>{t('create.explainerPoint3')}</span>
-              </li>
-            </ul>
-          </div>
-        </aside>
 
-        {/* RIGHT — Action card */}
-        <div className="lg:col-span-8 order-1 lg:order-2">
-          <div
-            className="rounded-3xl p-6 sm:p-8 shadow-sm"
-            style={{
-              background:
-                'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
-              border: '1.5px solid #E0E6F0',
-            }}
-          >
-            <div className="space-y-7">
-              <PlaintextStep
-                value={plaintext}
-                onChange={(v) => {
-                  setValue('secret', v, { shouldValidate: false, shouldDirty: true });
-                }}
-                registration={register('secret')}
-                error={errors.secret?.message?.toString()}
-              />
+          <KeyStep
+            mode={keyMode}
+            setMode={setKeyMode}
+            keyValue={keyMode === 'custom' ? customKey : generatedKey || ''}
+            customKey={customKey}
+            onCustomKeyChange={setCustomKey}
+            isBeforeEncrypt={false}
+            onRegenerate={regenerateKey}
+          />
 
-              <KeyStep
-                mode={keyMode}
-                setMode={setKeyMode}
-                keyValue={keyMode === 'custom' ? customKey : generatedKey || ''}
-                customKey={customKey}
-                onCustomKeyChange={setCustomKey}
-                isBeforeEncrypt={false}
-                onRegenerate={regenerateKey}
-              />
-
-              <section data-testid="step-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white shrink-0"
-                    style={{ background: '#7DD3C0' }}
-                    aria-hidden="true"
-                  >
-                    3
-                  </span>
-                  <h3 className="font-semibold text-base m-0 text-[#3A2E5C]">
-                    {t('create.step3Title')}
-                  </h3>
-                </div>
-                <CiphertextBox
-                  ciphertext={ciphertextPreview}
-                  waitingForEncrypt={!ciphertextPreview}
-                />
-              </section>
-
-              <SecretOptions
-                register={register}
-                setValue={setValue}
-                oneTime={oneTime}
-                setOneTime={setOneTime}
-                generateKey={keyMode === 'auto'}
-                setGenerateKey={(v) => setKeyMode(v ? 'auto' : 'custom')}
-                customPassword={customKey}
-                setCustomPassword={setCustomKey}
-                requireAuth={requireAuth}
-                setRequireAuth={setRequireAuth}
-                readReceipt={readReceipt}
-                setReadReceipt={setReadReceipt}
-              />
+          <section data-testid="step-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white shrink-0"
+                style={{ background: '#7DD3C0' }}
+                aria-hidden="true"
+              >
+                3
+              </span>
+              <h3 className="font-semibold text-base m-0 text-[#3A2E5C]">
+                {t('create.step3Title')}
+              </h3>
             </div>
-
-            <EncryptButton
-              loading={submitting}
-              disabled={submitDisabled}
-              onSubmit={() => {
-                // validate plaintext manually since we skip RHF submit
-                if (!plaintext) {
-                  setError('secret', { type: 'required', message: t('create.errorNoPlaintext') });
-                  return;
-                }
-                onSubmit();
-              }}
+            <CiphertextBox
+              ciphertext={ciphertextPreview}
+              waitingForEncrypt={!ciphertextPreview}
             />
-          </div>
+          </section>
+
+          <SecretOptions
+            register={register}
+            setValue={setValue}
+            oneTime={oneTime}
+            setOneTime={setOneTime}
+            requireAuth={requireAuth}
+            setRequireAuth={setRequireAuth}
+            readReceipt={readReceipt}
+            setReadReceipt={setReadReceipt}
+          />
+        </div>
+
+        <EncryptButton
+          loading={submitting}
+          disabled={submitDisabled}
+          onSubmit={() => {
+            // validate plaintext manually since we skip RHF submit
+            if (!plaintext) {
+              setError('secret', { type: 'required', message: t('create.errorNoPlaintext') });
+              return;
+            }
+            onSubmit();
+          }}
+        />
+
+        {/* Reassurance strip below button — what users actually need to know */}
+        <div className="mt-5 flex items-start gap-2.5 text-sm text-[#3A2E5C]/65 leading-relaxed">
+          <ShieldIcon className="h-5 w-5 shrink-0 text-[#4A95FF] mt-0.5" />
+          <p>{t('create.reassurance')}</p>
         </div>
       </div>
     </>

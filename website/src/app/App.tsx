@@ -38,7 +38,13 @@ export default function App() {
   // Whether creation pages must show the login gate instead of their content.
   const needsLogin = REQUIRE_AUTH && !authLoading && !isAuthenticated;
   return (
-    <div className="min-h-screen bg-base-200 flex flex-col overflow-x-hidden">
+    <div
+      className="min-h-screen flex flex-col overflow-x-hidden"
+      style={{
+        background:
+          'linear-gradient(180deg, #F4F8FE 0%, #F8FAF7 60%, #FAFAFA 100%)',
+      }}
+    >
       <button
         onClick={() => {
           const main = document.getElementById('main-content');
@@ -56,10 +62,10 @@ export default function App() {
         <main
           id="main-content"
           tabIndex={-1}
-          className="w-full max-w-screen-2xl mx-auto mb-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="w-full max-w-5xl mx-auto mb-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="card bg-base-100 shadow-sm border border-base-300 lg:border-0 lg:shadow-none">
-            <div className="card-body p-6 sm:p-10 lg:p-0">
+            <div className="card-body p-5 sm:p-8 lg:p-0">
               {loginUnavailable && (
                 <div role="alert" className="alert alert-warning mb-6">
                   <svg

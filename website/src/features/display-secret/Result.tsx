@@ -205,7 +205,7 @@ function Result({
           }}
         >
           <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
-            <span aria-hidden="true">🔄</span>
+            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
             {t('result.regenerateTitle')}
           </div>
           <div className="text-sm text-[#3A2E5C]/70 mb-3">

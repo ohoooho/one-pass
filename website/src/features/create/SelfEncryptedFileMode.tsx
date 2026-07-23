@@ -10,8 +10,6 @@ import Result from '@features/display-secret/Result';
 type FormValues = {
   expiration: string;
   oneTime: boolean;
-  generateKey: boolean;
-  customPassword: string;
 };
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB hard client-side cap
@@ -134,15 +132,18 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
-      <h2 className="text-4xl font-bold mb-2 text-[#3A2E5C] tracking-tight">
-        {t('create.fileMode.title')}
-      </h2>
-      <p className="text-base text-[#3A2E5C]/70 mb-6">
-        {t('create.fileMode.subtitle')}
-      </p>
+      {/* ── Hero band: title + subtitle ─────────────────────────── */}
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-[#3A2E5C] tracking-tight">
+          {t('create.fileMode.title')}
+        </h2>
+        <p className="text-base sm:text-lg text-[#3A2E5C]/70 max-w-2xl mx-auto leading-relaxed">
+          {t('create.fileMode.subtitle')}
+        </p>
+      </div>
 
       <details
-        className="mb-6 rounded-2xl p-4"
+        className="mb-6 sm:mb-8 rounded-2xl p-4 sm:p-5"
         style={{
           background: 'linear-gradient(135deg, rgba(165, 216, 255, 0.10) 0%, rgba(184, 230, 193, 0.10) 100%)',
           border: '1.5px solid rgba(165, 216, 255, 0.35)',
@@ -185,151 +186,157 @@ export default function SelfEncryptedFileMode({
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Drop zone */}
-        <section className="mb-6">
-          <div
-            data-testid="file-drop-zone"
-            className={`border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
-              dragActive ? 'border-[#4A95FF]' : 'border-[#E0E6F0]'
-            }`}
-            style={{
-              background: dragActive
-                ? 'rgba(74, 149, 255, 0.05)'
-                : 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
-            }}
-            onDragOver={e => {
-              e.preventDefault();
-              setDragActive(true);
-            }}
-            onDragLeave={() => setDragActive(false)}
-            onDrop={handleDrop}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              onChange={e => {
-                const f = e.target.files?.[0];
-                if (f) readFile(f);
-              }}
-            />
-            <button
-              type="button"
-              className="cursor-pointer block w-full"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-12 h-12 text-[#3A2E5C]/50"
-                  aria-hidden="true"
+      {/* ── Action card — single column ──────────────────────────── */}
+      <div
+        className="rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm"
+        style={{
+          background:
+            'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+          border: '1.5px solid #E0E6F0',
+        }}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-7 sm:space-y-9">
+            {/* Drop zone */}
+            <section>
+              <div
+                data-testid="file-drop-zone"
+                className={`border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
+                  dragActive ? 'border-[#4A95FF]' : 'border-[#E0E6F0]'
+                }`}
+                style={{
+                  background: dragActive
+                    ? 'rgba(74, 149, 255, 0.05)'
+                    : 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+                }}
+                onDragOver={e => {
+                  e.preventDefault();
+                  setDragActive(true);
+                }}
+                onDragLeave={() => setDragActive(false)}
+                onDrop={handleDrop}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={e => {
+                    const f = e.target.files?.[0];
+                    if (f) readFile(f);
+                  }}
+                />
+                <button
+                  type="button"
+                  className="cursor-pointer block w-full"
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
-                  />
-                </svg>
-                <div className="mt-2 font-semibold text-[#3A2E5C]">
-                  {filename ?? t('create.fileMode.dropzoneText')}
-                </div>
-                <div className="text-sm text-[#3A2E5C]/60">
-                  {t('create.fileMode.maxFileSize', { size: '50 MB' })}
-                </div>
+                  <div className="flex flex-col items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-12 h-12 text-[#3A2E5C]/50"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
+                      />
+                    </svg>
+                    <div className="mt-2 font-semibold text-[#3A2E5C]">
+                      {filename ?? t('create.fileMode.dropzoneText')}
+                    </div>
+                    <div className="text-sm text-[#3A2E5C]/60">
+                      {t('create.fileMode.maxFileSize', { size: '50 MB' })}
+                    </div>
+                  </div>
+                </button>
               </div>
+            </section>
+
+            {/* Ciphertext preview textarea */}
+            <section>
+              <label className="label" htmlFor="ciphertext">
+                <span className="label-text text-sm font-semibold text-[#3A2E5C]">
+                  {t('create.fileMode.ciphertextLabel')}
+                </span>
+              </label>
+              <textarea
+                id="ciphertext"
+                data-testid="file-ciphertext"
+                value={ciphertext}
+                onChange={e => {
+                  setCiphertext(e.target.value);
+                  setFilename(null);
+                }}
+                className="textarea w-full min-h-[120px] text-xs font-mono p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] bg-white text-[#3A2E5C]"
+                placeholder={t('create.fileMode.ciphertextPlaceholder')}
+              />
+              {ciphertext && (
+                <p className="text-xs text-[#3A2E5C]/60 mt-1">
+                  {t('create.fileMode.ciphertextSize', {
+                    size: ciphertext.length.toLocaleString(),
+                    limit: SERVER_SAFE_CIPHERTEXT_BYTES.toLocaleString(),
+                  })}
+                </p>
+              )}
+            </section>
+
+            {/* Custom key (REQUIRED — never generated in this mode) */}
+            <section>
+              <label className="label" htmlFor="customKey">
+                <span className="label-text text-sm font-semibold text-[#3A2E5C]">
+                  {t('create.fileMode.keyLabel')}
+                </span>
+              </label>
+              <input
+                id="customKey"
+                type="text"
+                value={customKey}
+                onChange={e => setCustomKey(e.target.value)}
+                className="input w-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] font-mono text-sm bg-white text-[#3A2E5C] h-12 px-4"
+                placeholder={t('create.fileMode.keyPlaceholder')}
+                data-testid="file-key"
+              />
+              <p className="text-xs text-[#3A2E5C]/60 mt-1">
+                {t('create.fileMode.keyHint')}
+              </p>
+            </section>
+
+            <SecretOptions
+              register={register}
+              setValue={setValue}
+              oneTime={oneTime}
+              setOneTime={setOneTime}
+              requireAuth={false}
+              setRequireAuth={() => {
+                /* noop */
+              }}
+              readReceipt={readReceipt}
+              setReadReceipt={setReadReceipt}
+              expirationLabel={t('create.fileMode.expirationLabel')}
+            />
+          </div>
+
+          <div className="mt-8">
+            <button
+              type="submit"
+              disabled={!ciphertext || !customKey}
+              className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+                color: 'white',
+              }}
+              data-testid="file-submit"
+            >
+              {t('create.fileMode.submit')}
             </button>
           </div>
-        </section>
-
-        {/* Ciphertext preview textarea */}
-        <section className="mb-6">
-          <label className="label" htmlFor="ciphertext">
-            <span className="label-text text-sm font-semibold text-[#3A2E5C]">
-              {t('create.fileMode.ciphertextLabel')}
-            </span>
-          </label>
-          <textarea
-            id="ciphertext"
-            data-testid="file-ciphertext"
-            value={ciphertext}
-            onChange={e => {
-              setCiphertext(e.target.value);
-              setFilename(null);
-            }}
-            className="textarea w-full min-h-[120px] text-xs font-mono p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] bg-white text-[#3A2E5C]"
-            placeholder={t('create.fileMode.ciphertextPlaceholder')}
-          />
-          {ciphertext && (
-            <p className="text-xs text-[#3A2E5C]/60 mt-1">
-              {t('create.fileMode.ciphertextSize', {
-                size: ciphertext.length.toLocaleString(),
-                limit: SERVER_SAFE_CIPHERTEXT_BYTES.toLocaleString(),
-              })}
-            </p>
-          )}
-        </section>
-
-        {/* Custom key (REQUIRED — never generated in this mode) */}
-        <section className="mb-6">
-          <label className="label" htmlFor="customKey">
-            <span className="label-text text-sm font-semibold text-[#3A2E5C]">
-              {t('create.fileMode.keyLabel')}
-            </span>
-          </label>
-          <input
-            id="customKey"
-            type="text"
-            value={customKey}
-            onChange={e => setCustomKey(e.target.value)}
-            className="input w-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] font-mono text-sm bg-white text-[#3A2E5C] h-12 px-4"
-            placeholder={t('create.fileMode.keyPlaceholder')}
-            data-testid="file-key"
-          />
-          <p className="text-xs text-[#3A2E5C]/60 mt-1">
-            {t('create.fileMode.keyHint')}
-          </p>
-        </section>
-
-        <SecretOptions
-          register={register}
-          setValue={setValue}
-          oneTime={oneTime}
-          setOneTime={setOneTime}
-          generateKey={false}
-          setGenerateKey={() => {
-            /* noop */
-          }}
-          customPassword={customKey}
-          setCustomPassword={setCustomKey}
-          requireAuth={false}
-          setRequireAuth={() => {
-            /* noop */
-          }}
-          readReceipt={readReceipt}
-          setReadReceipt={setReadReceipt}
-          expirationLabel={t('create.fileMode.expirationLabel')}
-        />
-
-        <div className="mt-8">
-          <button
-            type="submit"
-            disabled={!ciphertext || !customKey}
-            className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-              color: 'white',
-            }}
-            data-testid="file-submit"
-          >
-            {t('create.fileMode.submit')}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 }

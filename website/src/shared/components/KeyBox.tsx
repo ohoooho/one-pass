@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ShieldIcon } from '@shared/components/icons';
 
 interface Props {
   password: string;
@@ -12,10 +13,13 @@ interface Props {
 /**
  * Soft-red bordered box that displays the decryption key (or password).
  *
- * Visual contract: soft red border + 🛡️ caption = "this NEVER leaves the
- * browser". The key never appears in any network request body or header —
- * it travels to the recipient only via the URL fragment, which HTTP strips
- * at the server boundary (RFC 3986 §3.5).
+ * Visual contract: soft red border + shield icon caption = "this NEVER
+ * leaves the browser". The key never appears in any network request body or
+ * header — it travels to the recipient only via the URL fragment, which
+ * HTTP strips at the server boundary (RFC 3986 §3.5).
+ *
+ * v3 (2026-07-23): replaced 🛡️ emoji with SVG ShieldIcon — emoji renders as
+ * `□` on systems without an emoji font (Linux servers, some Windows browsers).
  *
  * Border colour is intentionally soft (#FCA5A5, not #EF4444) so the box
  * reads as "informational boundary", not "error".
@@ -55,7 +59,7 @@ export function KeyBox({ password, onRegenerate, hidden, waitingForEncrypt }: Pr
         )}
       </div>
       <p className="text-sm mt-3 font-medium flex items-center gap-1.5" style={{ color: '#B91C1C' }}>
-        <span aria-hidden="true">🛡️</span>
+        <ShieldIcon className="h-4 w-4 shrink-0" />
         <span>{t('about.redCaption')}</span>
       </p>
     </div>
