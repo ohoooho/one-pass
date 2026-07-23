@@ -361,7 +361,7 @@
     "evidence2Title": "Server Go code",
     "evidence2Body": "onepass-server only parses the URL path, never reads fragments (see pkg/server/server.go).",
     "evidence3Title": "Network capture verification",
-    "evidence3Body": "On 140.143.246.15: tcpdump on the server port. You will NEVER see anything after #.",
+    "evidence3Body": "Run tcpdump / mitmproxy / Wireshark between your browser and any web server (or your own one-pass deployment). The HTTP request never contains anything after the # — that fragment is stripped by the browser before the request is sent (RFC 3986 §3.5).",
     "evidence4Title": "Verify it yourself with F12",
     "evidence4Body": "Open https://one-pass.ohoooho.com/ -> F12 -> Network -> create a secret -> POST body only contains BEGIN PGP MESSAGE ciphertext. Plaintext never appears in any request.",
     "riskTitle": "Residual risks (full disclosure)",
