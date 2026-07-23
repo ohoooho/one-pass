@@ -13,6 +13,8 @@ interface KeyStepProps {
   onCustomKeyChange: (v: string) => void;
   /** Whether the form has been submitted yet (controls whether we show the key). */
   isBeforeEncrypt: boolean;
+  /** Handler for the regenerate button (only meaningful in 'auto' mode). */
+  onRegenerate?: () => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export function KeyStep({
   customKey,
   onCustomKeyChange,
   isBeforeEncrypt,
+  onRegenerate,
 }: KeyStepProps) {
   const { t } = useTranslation();
   const showWaiting = mode === 'auto' && isBeforeEncrypt;
@@ -148,6 +151,7 @@ export function KeyStep({
       {/* Key display box */}
       <KeyBox
         password={keyValue}
+        onRegenerate={mode === 'auto' ? onRegenerate : undefined}
         waitingForEncrypt={showWaiting}
       />
     </section>

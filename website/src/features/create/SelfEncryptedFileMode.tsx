@@ -153,17 +153,16 @@ export default function SelfEncryptedFileMode({
         </summary>
         <div className="mt-3 text-sm space-y-3 text-[#3A2E5C]/80">
           <p>{t('create.fileMode.helpIntro')}</p>
+          <div className="text-sm text-[#3A2E5C]/70">
+            {t('create.fileMode.helpCommand')}
+          </div>
           <pre
-            className="bg-white/80 rounded-xl p-3 text-xs overflow-x-auto whitespace-pre border border-[#E0E6F0] text-[#3A2E5C]/80"
-          >{`# gpg (AES-256)
-gpg --symmetric --cipher-algo AES256 your-file.txt
-
-# age (modern, simple)
-age -p < your-file.txt > encrypted.age
-
-# openssl
-openssl enc -aes-256-gcm -salt -pbkdf2 \\
-  -in your-file.txt -out encrypted.bin`}</pre>
+            className="bg-white/80 rounded-xl p-3 text-xs overflow-x-auto whitespace-pre border border-[#E0E6F0] text-[#3A2E5C]/80 font-mono"
+            data-testid="file-mode-help-command"
+          >{t('create.fileMode.helpCommandExample')}</pre>
+          <p className="text-xs text-[#3A2E5C]/60">
+            {t('create.fileMode.helpCommandNote')}
+          </p>
           <p className="text-xs text-[#3A2E5C]/60">
             {t('create.fileMode.helpSizeNote', {
               limit: SERVER_SAFE_CIPHERTEXT_BYTES,
