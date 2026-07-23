@@ -62,9 +62,9 @@ export default function TextSecretMode() {
   // Key strategy is now plain useState — no more react-hook-form coupling.
   const [keyMode, setKeyMode] = useState<KeyMode>('auto');
   const [customKey, setCustomKey] = useState('');
-
-  // After encryption, we capture the resolved values for display in Result.
-  const [generatedKey, setGeneratedKey] = useState('');
+  // Generate a fresh random key on mount so it's visible immediately in auto mode.
+  const [generatedKey, setGeneratedKey] = useState(() => randomString());
+  const regenerateKey = () => setGeneratedKey(randomString());
   const [ciphertextPreview, setCiphertextPreview] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -175,9 +175,9 @@ export default function TextSecretMode() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* LEFT — stepper + explainer (sticky on lg) */}
-        <aside className="lg:col-span-5 lg:sticky lg:top-20 order-2 lg:order-1">
+        <aside className="lg:col-span-4 lg:sticky lg:top-20 order-2 lg:order-1">
           <StepBar
             steps={[
               { id: 1, title: t('create.stepTitle1'), hint: t('create.stepHint1') },
@@ -221,7 +221,7 @@ export default function TextSecretMode() {
         </aside>
 
         {/* RIGHT — Action card */}
-        <div className="lg:col-span-7 order-1 lg:order-2">
+        <div className="lg:col-span-8 order-1 lg:order-2">
           <div
             className="rounded-3xl p-6 sm:p-8 shadow-sm"
             style={{
@@ -246,7 +246,8 @@ export default function TextSecretMode() {
                 keyValue={keyMode === 'custom' ? customKey : generatedKey || ''}
                 customKey={customKey}
                 onCustomKeyChange={setCustomKey}
-                isBeforeEncrypt={!ciphertextPreview}
+                isBeforeEncrypt={false}
+                onRegenerate={regenerateKey}
               />
 
               <section data-testid="step-3">

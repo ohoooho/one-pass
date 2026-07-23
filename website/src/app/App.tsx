@@ -56,10 +56,10 @@ export default function App() {
         <main
           id="main-content"
           tabIndex={-1}
-          className="w-full max-w-3xl mx-auto mb-auto px-4 py-12 sm:py-16 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="w-full max-w-screen-2xl mx-auto mb-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <div className="card bg-base-100 shadow-sm border border-base-300">
-            <div className="card-body p-6 sm:p-10">
+          <div className="card bg-base-100 shadow-sm border border-base-300 lg:border-0 lg:shadow-none">
+            <div className="card-body p-6 sm:p-10 lg:p-0">
               {loginUnavailable && (
                 <div role="alert" className="alert alert-warning mb-6">
                   <svg

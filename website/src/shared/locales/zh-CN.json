@@ -7,7 +7,7 @@
     "step3Title": "在你浏览器加密的密文",
     "inputSecretLabel": "你的明文",
     "inputSecretPlaceholder": "把要分享的密钥/密码/凭证粘贴到这里…",
-    "buttonEncrypt": "生成一次性分享链接",
+    "buttonEncrypt": "加密消息",
     "inputCustomPasswordLabel": "自定义密钥",
     "inputCustomPasswordPlaceholder": "输入你自己的密钥…",
     "inputOneTimeLabel": "阅后即焚（只能打开一次）",
@@ -32,9 +32,9 @@
     "tabFile": "📁 文件（你已自己加密）",
     "fileMode": {
       "title": "上传你已加密的文件",
-      "subtitle": "你用 gpg / age / openssl 等工具加密好的密文 + 你的密钥 = 我们不碰，服务端只存密文。",
+      "subtitle": "把 gpg 对称加密后的密文 + 你的密钥 = 我们不碰，服务端只存密文。",
       "helpTitle": "怎么自己加密文件？",
-      "helpIntro": "在你自己的电脑上用任何加密工具加密文件，然后把密文内容粘贴/拖到下方。我们的服务端永远看不到加密前的明文，因为密钥是你自己的。",
+      "helpIntro": "在你的电脑上用 gpg 对称加密文件，把生成的密文粘贴/拖到下方。服务端永远看不到加密前的明文，因为密钥是你自己掌握的。",
       "helpSizeNote": "服务端单条消息大小上限约 {{limit}} 字节（加密后 + base64 编码前的纯密文长度）。更大的文件请先用 tar/gzip 压缩再加密。",
       "dropzoneText": "拖拽密文文件到此处，或点击选择",
       "maxFileSize": "最大文件：{{size}}",
@@ -48,7 +48,10 @@
       "submit": "上传密文并生成链接",
       "errorNoCiphertext": "请先上传或粘贴密文",
       "errorNoKey": "请输入你加密时用的密钥",
-      "errorTooLargeForServer": "密文超过服务端上限（{{limit}} 字节）。请先用 tar/gzip 压缩原文件，或换更短的加密格式。"
+      "errorTooLargeForServer": "密文超过服务端上限（{{limit}} 字节）。请先用 tar/gzip 压缩原文件，或换更短的加密格式。",
+      "helpCommand": "示例命令：",
+      "helpCommandExample": "gpg --symmetric --armor < secret.txt",
+      "helpCommandNote": "armor 模式输出 OpenPGP 标准 ASCII 格式（-----BEGIN PGP MESSAGE-----），才能被我们的解密端识别。"
     },
     "keyModeLabel": "选择密钥方式",
     "keyModeAuto": "自动生成密钥",
@@ -69,8 +72,8 @@
     "explainerPoint1": "服务端只看密文（AES-256 / OpenPGP）",
     "explainerPoint2": "密钥通过 URL # 传递（HTTP 保证不到服务端）",
     "explainerPoint3": "全栈 Apache-2.0 开源可审计",
-    "keyWaitingPlaceholder": "点击「加密消息」后会在此生成密钥…",
-    "cipherWaitingPlaceholder": "点击「加密消息」后会在此显示密文…",
+    "keyWaitingPlaceholder": "点击右侧「重新生成」按钮可换一个密钥",
+    "cipherWaitingPlaceholder": "点击下方「加密消息」按钮后，密文会显示在此处",
     "encryptingMessage": "正在加密…",
     "buttonDisabledHint": "请先在上方输入明文",
     "errorNoKey": "请先输入密钥",
@@ -86,7 +89,12 @@
     "errorSelectFile": "请选择要上传的文件",
     "errorFailedToRead": "读取文件失败",
     "expirationLegendFile": "加密文件将在以下时间后自动删除",
-    "fileTooLarge": "文件超过最大允许大小 {{maxSize}}"
+    "fileTooLarge": "文件超过最大允许大小 {{maxSize}}",
+    "subtitle": "把 gpg 对称加密后的密文 + 你的密钥 = 我们不碰，服务端只存密文。",
+    "helpIntro": "在你的电脑上用 gpg 对称加密文件，把生成的密文粘贴/拖到下方。服务端永远看不到加密前的明文，因为密钥是你自己掌握的。",
+    "helpCommand": "示例命令：",
+    "helpCommandExample": "gpg --symmetric --armor < secret.txt",
+    "helpCommandNote": "armor 模式输出 OpenPGP 标准 ASCII 格式（-----BEGIN PGP MESSAGE-----），才能被我们的解密端识别。"
   },
   "display": {
     "titleDecrypting": "解密中…",
