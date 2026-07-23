@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { CheckIcon } from '@shared/components/icons';
 
 interface Props {
   ciphertext: string;
@@ -10,9 +11,12 @@ interface Props {
 /**
  * Soft-green bordered box that displays an OpenPGP ciphertext.
  *
- * Visual contract: soft green border + ✅ caption = "this is the ONLY thing
- * the server ever sees". Anything inside this box is allowed in the POST
- * body.
+ * Visual contract: soft green border + check icon caption = "this is the
+ * ONLY thing the server ever sees". Anything inside this box is allowed in
+ * the POST body.
+ *
+ * v3 (2026-07-23): replaced ✅ emoji with SVG CheckIcon — emoji renders as
+ * `□` on systems without an emoji font.
  *
  * Border colour is intentionally soft (#B8E6C1, not #16A34A) so the box
  * reads as "informational boundary", not "alert".
@@ -37,7 +41,7 @@ export function CiphertextBox({ ciphertext, redacted, waitingForEncrypt }: Props
         {display || (waitingForEncrypt ? t('create.cipherWaitingPlaceholder') : '\n\n\n')}
       </pre>
       <p className="text-sm mt-3 font-medium flex items-center gap-1.5" style={{ color: '#15803D' }}>
-        <span aria-hidden="true">✅</span>
+        <CheckIcon className="h-4 w-4 shrink-0" />
         <span>{t('about.greenCaption')}</span>
       </p>
       {redacted && (

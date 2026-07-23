@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { LockIcon } from '@shared/components/icons';
 import { InfoPopover } from '@shared/components/InfoPopover';
 
 interface EncryptButtonProps {
@@ -10,8 +11,9 @@ interface EncryptButtonProps {
 /**
  * The main "加密消息" button.
  *
- * Lives on its own so the parent can keep its form logic tight and so we
- * can easily swap the spinner / label later.
+ * v3 (2026-07-23): uses SVG LockIcon instead of inline SVG lock path so the
+ * icon scales with the button. Slightly larger h-16 for better thumb target
+ * on mobile.
  */
 export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProps) {
   const { t } = useTranslation();
@@ -21,7 +23,7 @@ export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProp
         type="button"
         onClick={onSubmit}
         disabled={disabled || loading}
-        className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5"
         style={{
           background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
           color: 'white',
@@ -38,21 +40,7 @@ export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProp
           </>
         ) : (
           <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
+            <LockIcon className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
             <span>{t('create.buttonEncrypt')}</span>
             <InfoPopover
               titleKey="create.infoA6Title"

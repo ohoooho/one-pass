@@ -14,8 +14,6 @@ import Result from '@features/display-secret/Result';
 type FormValues = {
   expiration: string;
   oneTime: boolean;
-  generateKey: boolean;
-  customPassword: string;
 };
 
 export default function StreamingUpload() {
@@ -33,10 +31,6 @@ export default function StreamingUpload() {
   const {
     oneTime,
     setOneTime,
-    generateKey,
-    setGenerateKey,
-    customPassword,
-    setCustomPassword,
     result,
     setResult,
     getPassword,
@@ -47,8 +41,6 @@ export default function StreamingUpload() {
     defaultValues: {
       expiration: String(config?.DEFAULT_EXPIRY ?? 3600),
       oneTime: true,
-      generateKey: true,
-      customPassword: '',
     },
   });
 
@@ -275,10 +267,6 @@ export default function StreamingUpload() {
           setValue={setValue}
           oneTime={oneTime}
           setOneTime={setOneTime}
-          generateKey={generateKey}
-          setGenerateKey={setGenerateKey}
-          customPassword={customPassword}
-          setCustomPassword={setCustomPassword}
           requireAuth={requireAuth}
           setRequireAuth={setRequireAuth}
           readReceipt={readReceipt}

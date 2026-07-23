@@ -67,18 +67,14 @@
     "stepHint2": "本地生成或自填",
     "stepHint3": "本地 OpenPGP 加密",
     "stepHint4": "一键复制给对方",
-    "explainerTitle": "为什么这是 zero-knowledge？",
-    "explainerBody": "one-pass 服务端永远拿不到明文，也永远拿不到密钥。整个加密过程在你浏览器本地完成，只把不可解的密文上传。",
-    "explainerPoint1": "服务端只看密文（AES-256 / OpenPGP）",
-    "explainerPoint2": "密钥通过 URL # 传递（HTTP 保证不到服务端）",
-    "explainerPoint3": "全栈 Apache-2.0 开源可审计",
     "keyWaitingPlaceholder": "点击右侧「重新生成」按钮可换一个密钥",
     "cipherWaitingPlaceholder": "点击下方「加密消息」按钮后，密文会显示在此处",
     "encryptingMessage": "正在加密…",
     "buttonDisabledHint": "请先在上方输入明文",
     "errorNoKey": "请先输入密钥",
     "errorNoPlaintext": "请先输入要加密的内容",
-    "errorGeneric": "加密失败，请重试"
+    "errorGeneric": "加密失败，请重试",
+    "reassurance": "明文与密钥永远留在你的浏览器中。one-pass 服务端只能看到一段不可解的密文（OpenPGP + AES-256），无法看到密钥，也无法解出明文。"
   },
   "upload": {
     "title": "上传文件",

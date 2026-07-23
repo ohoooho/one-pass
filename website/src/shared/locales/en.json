@@ -67,18 +67,14 @@
     "stepHint2": "Auto or custom",
     "stepHint3": "OpenPGP in browser",
     "stepHint4": "Share with recipient",
-    "explainerTitle": "Why this is zero-knowledge",
-    "explainerBody": "The one-pass server never sees your plaintext, and never sees your key. All encryption happens locally in your browser — only the undecryptable ciphertext is uploaded.",
-    "explainerPoint1": "Server only sees ciphertext (AES-256 / OpenPGP)",
-    "explainerPoint2": "Key travels via URL # (HTTP guarantees no server)",
-    "explainerPoint3": "Full-stack Apache-2.0 open source, auditable",
     "keyWaitingPlaceholder": "Click \"Regenerate\" on the right to get a new key",
     "cipherWaitingPlaceholder": "After you click \"Encrypt Message\" below, the ciphertext will appear here",
     "encryptingMessage": "Encrypting…",
     "buttonDisabledHint": "Type your plaintext above first",
     "errorNoKey": "Enter a key first",
     "errorNoPlaintext": "Enter the content to encrypt first",
-    "errorGeneric": "Encryption failed, please retry"
+    "errorGeneric": "Encryption failed, please retry",
+    "reassurance": "Your plaintext and key never leave your browser. The one-pass server only sees undecryptable ciphertext (OpenPGP + AES-256) — it has no key, so it can never read your plaintext."
   },
   "upload": {
     "title": "Upload file",
