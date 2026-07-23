@@ -592,6 +592,11 @@ func (y *Server) HTTPHandler() http.Handler {
 	if !y.ReadOnly {
 		mx.Handle("/create/secret", y.maybeRequireAuth(y.createSecret)).Methods(http.MethodPost)
 		mx.HandleFunc("/create/secret", secretOptions).Methods(http.MethodOptions)
+		// Alias for original Yopass clients (yopass-cli etc.) that POST to
+		// /secret. The fork moved writes to /create/secret to make the
+		// intent explicit and to leave room for new endpoints under /secret/*.
+		mx.Handle("/secret", y.maybeRequireAuth(y.createSecret)).Methods(http.MethodPost)
+		mx.HandleFunc("/secret", secretOptions).Methods(http.MethodOptions)
 	}
 
 	// Secret request endpoints — business feature, requires a valid license.
