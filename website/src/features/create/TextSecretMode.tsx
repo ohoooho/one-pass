@@ -137,6 +137,9 @@ export default function TextSecretMode() {
         customPassword={result.customPassword}
         oneTime={config.FORCE_ONETIME_SECRETS || oneTime}
         receiptToken={receiptToken}
+        plaintext={keyMode === 'auto' ? plaintext : undefined}
+        expirationSeconds={parseInt(expiration, 10)}
+        readReceipt={config.READ_RECEIPTS && readReceipt}
       />
     );
   }

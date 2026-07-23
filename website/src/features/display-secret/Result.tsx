@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfig } from '@shared/hooks/useConfig';
 import { useCopy } from '@shared/hooks/useCopy';
@@ -6,7 +7,11 @@ import {
   CheckIcon,
   CopyIcon,
   InfoIcon,
+  RefreshIcon,
 } from '@shared/components/icons';
+import { encryptMessage } from '@shared/lib/crypto';
+import { postSecret } from '@shared/lib/api';
+import { randomString } from '@shared/lib/random';
 import ReceiptStatus from '@features/display-secret/ReceiptStatus';
 
 interface ResultProps {
@@ -16,6 +21,16 @@ interface ResultProps {
   customPassword: boolean;
   oneTime: boolean;
   receiptToken?: string;
+  /**
+   * Original plaintext (only used if user clicks "Regenerate").
+   * The result page does NOT persist this for security; the parent must
+   * pass it down if it wants to support regeneration.
+   */
+  plaintext?: string;
+  /** Original options so we can re-POST with the same expiration. */
+  expirationSeconds?: number;
+  /** Original read-receipt flag so we can re-POST with the same flag. */
+  readReceipt?: boolean;
 }
 
 function CopyButton({
@@ -33,15 +48,13 @@ function CopyButton({
 }) {
   return (
     <button
-      className={`btn btn-sm font-medium transition-all duration-200 shrink-0 mt-1 ${copied ? 'btn-success' : 'btn-primary'}`}
+      className={`btn btn-sm font-medium transition-all duration-200 shrink-0 mt-1 ${
+        copied ? 'btn-success' : 'btn-primary'
+      }`}
       onClick={onClick}
       title={title}
     >
-      {copied ? (
-        <CheckIcon className="size-4" />
-      ) : (
-        <CopyIcon className="size-4" />
-      )}
+      {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
       {copied ? copiedLabel : copyLabel}
     </button>
   );
@@ -54,109 +67,178 @@ function Result({
   customPassword,
   oneTime,
   receiptToken,
+  plaintext,
+  expirationSeconds,
+  readReceipt,
 }: ResultProps) {
   const { t } = useTranslation();
   const config = useConfig();
   const baseURL = config.PUBLIC_URL
     ? config.PUBLIC_URL.replace(/\/$/, '')
     : window.location.origin;
-  const oneClickLink = `${baseURL}/#/${prefix}/${uuid}/${password}`;
-  const shortLink = `${baseURL}/#/${prefix}/${uuid}`;
   const { copy, isCopied } = useCopy();
+
+  // Regenerate state
+  const [regenLoading, setRegenLoading] = useState(false);
+  const [regenError, setRegenError] = useState<string | null>(null);
+  const [regenPair, setRegenPair] = useState<{ uuid: string; password: string } | null>(null);
+
+  async function regenerate() {
+    if (!plaintext) {
+      setRegenError(t('result.regenerateNoPlaintext'));
+      return;
+    }
+    setRegenLoading(true);
+    setRegenError(null);
+    try {
+      const newKey = randomString();
+      const newCipher = await encryptMessage(plaintext, newKey, config.ARGON2);
+      const { data, status } = await postSecret(
+        {
+          expiration: expirationSeconds ?? 3600,
+          message: newCipher,
+          one_time: oneTime,
+          require_auth: false,
+          receipt: !!readReceipt,
+        },
+        config.OIDC_ENABLED,
+      );
+      if (status !== 200) {
+        setRegenError(data.message ?? t('result.regenerateFailed'));
+        return;
+      }
+      // Replace current link with the new one
+      setRegenPair({ uuid: data.message, password: newKey });
+    } catch (e) {
+      setRegenError((e as Error).message ?? t('result.regenerateFailed'));
+    } finally {
+      setRegenLoading(false);
+    }
+  }
+
+  // Use regenerated values if present, otherwise the originals.
+  const activeUuid = regenPair?.uuid ?? uuid;
+  const activePassword = regenPair?.password ?? password;
+  const activeOneClick = `${baseURL}/#/${prefix}/${activeUuid}/${activePassword}`;
+  const activeShort = `${baseURL}/#/${prefix}/${activeUuid}`;
 
   return (
     <>
-      {' '}
       <div className="flex items-center gap-3 mb-2">
         <CheckCircleIcon className="h-7 w-7 text-success" />
-        <h2 className="text-2xl font-bold">{t('result.title')}</h2>
+        <h2 className="text-2xl font-bold text-[#3A2E5C]">{t('result.title')}</h2>
       </div>
-      <p className="mb-6 text-base">{t('result.subtitle')}</p>
+      <p className="mb-6 text-base text-[#3A2E5C]/70">{t('result.subtitle')}</p>
+
       {oneTime && (
-        <div className="alert alert-warning mb-6 shadow-sm">
-          <InfoIcon className="w-6 h-6 shrink-0" />
+        <div
+          className="mb-6 rounded-2xl p-4 flex items-start gap-3"
+          style={{
+            background: 'rgba(255, 216, 156, 0.25)',
+            border: '1.5px solid rgba(255, 184, 77, 0.5)',
+          }}
+        >
+          <InfoIcon className="w-6 h-6 shrink-0 text-[#92400E]" />
           <div>
-            <div className="font-semibold text-base mb-1">
+            <div className="font-semibold text-base mb-1 text-[#3A2E5C]">
               {t('result.reminderTitle')}
             </div>
-            <div className="text-sm opacity-90">
+            <div className="text-sm text-[#3A2E5C]/70">
               {t('result.subtitleDownloadOnce')}
             </div>
           </div>
         </div>
       )}
-      {oneClickLink && !customPassword && (
-        <div className="mb-4 p-5 bg-base-200/50 border border-base-300 rounded-lg">
-          <div className="font-semibold text-base mb-1 text-base-content">
-            {t('result.rowLabelOneClick')}
-          </div>
-          <div className="text-sm text-base-content/70 mb-4">
-            {t('result.rowOneClickDescription')}
-          </div>
-          <div className="flex items-start gap-3">
-            <CopyButton
-              copied={isCopied('oneClick')}
-              onClick={() => copy(oneClickLink, 'oneClick')}
-              title="Copy one-click link"
-              copyLabel={t('common.copy')}
-              copiedLabel={t('common.copied')}
-            />
-            <div className="flex-1 bg-base-100 border border-base-300 rounded-md px-4 py-3 min-h-[2.5rem] min-w-0">
-              <code className="text-sm text-base-content/80 font-mono break-words leading-relaxed">
-                {oneClickLink}
-              </code>
-            </div>
-          </div>
+
+      {regenError && (
+        <div
+          className="mb-4 rounded-2xl px-4 py-3 text-sm font-medium"
+          style={{
+            background: 'rgba(254, 226, 226, 0.6)',
+            border: '1.5px solid #FCA5A5',
+            color: '#B91C1C',
+          }}
+          role="alert"
+        >
+          {regenError}
         </div>
       )}
-      <div className="mb-4 p-5 bg-base-200/50 border border-base-300 rounded-lg">
-        <div className="font-semibold text-base mb-1 text-base-content">
-          {t('result.rowLabelShortLink')}
-        </div>
-        <div className="text-sm text-base-content/70 mb-4">
-          {t('result.rowShortLinkDescription')}
-        </div>
-        <div className="flex items-start gap-3">
-          <CopyButton
-            copied={isCopied('shortLink')}
-            onClick={() => copy(shortLink, 'shortLink')}
-            title="Copy short link"
-            copyLabel={t('common.copy')}
-            copiedLabel={t('common.copied')}
-          />
-          <div className="flex-1 bg-base-100 border border-base-300 rounded-md px-4 py-3 min-h-[2.5rem] min-w-0">
-            <code className="text-sm text-base-content/80 font-mono break-words leading-relaxed">
-              {shortLink}
-            </code>
+
+      <ResultRow
+        title={t('result.rowLabelOneClick')}
+        description={t('result.rowOneClickDescription')}
+        value={activeOneClick}
+        copyId="oneClick"
+        copy={copy}
+        isCopied={isCopied}
+        t={t}
+      />
+      <ResultRow
+        title={t('result.rowLabelShortLink')}
+        description={t('result.rowShortLinkDescription')}
+        value={activeShort}
+        copyId="shortLink"
+        copy={copy}
+        isCopied={isCopied}
+        t={t}
+      />
+      <ResultRow
+        title={t('result.rowLabelDecryptionKey')}
+        description={t('result.rowDecryptionKeyDescription')}
+        value={activePassword}
+        copyId="password"
+        copy={copy}
+        isCopied={isCopied}
+        t={t}
+        mono
+      />
+
+      {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}
+
+      {/* Regenerate row — only shown when parent passed plaintext (text mode) */}
+      {plaintext && !customPassword && (
+        <div
+          className="mt-6 rounded-2xl p-5"
+          style={{
+            background: 'linear-gradient(135deg, rgba(165, 216, 255, 0.18) 0%, rgba(184, 230, 193, 0.18) 100%)',
+            border: '1.5px solid rgba(165, 216, 255, 0.4)',
+          }}
+        >
+          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
+            <span aria-hidden="true">🔄</span>
+            {t('result.regenerateTitle')}
           </div>
-        </div>
-      </div>
-      <div className="mb-4 p-5 bg-base-200/50 border border-base-300 rounded-lg">
-        <div className="font-semibold text-base mb-1 text-base-content">
-          {t('result.rowLabelDecryptionKey')}
-        </div>
-        <div className="text-sm text-base-content/70 mb-4">
-          {t('result.rowDecryptionKeyDescription')}
-        </div>
-        <div className="flex items-start gap-3">
-          <CopyButton
-            copied={isCopied('password')}
-            onClick={() => copy(password, 'password')}
-            title="Copy decryption key"
-            copyLabel={t('common.copy')}
-            copiedLabel={t('common.copied')}
-          />
-          <div className="flex-1 bg-base-100 border border-base-300 rounded-md px-4 py-3 min-h-[2.5rem] min-w-0">
-            <code className="text-sm text-base-content/80 font-mono break-words leading-relaxed">
-              {password}
-            </code>
+          <div className="text-sm text-[#3A2E5C]/70 mb-3">
+            {t('result.regenerateDescription')}
           </div>
+          <button
+            type="button"
+            onClick={regenerate}
+            disabled={regenLoading}
+            className="btn btn-primary btn-sm rounded-xl disabled:opacity-50"
+            data-testid="regenerate-and-reupload"
+          >
+            {regenLoading ? (
+              <>
+                <span
+                  className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+                <span>{t('result.regenerating')}</span>
+              </>
+            ) : (
+              <>
+                <RefreshIcon className="size-4" />
+                <span>{t('result.regenerateButton')}</span>
+              </>
+            )}
+          </button>
         </div>
-      </div>
-      {receiptToken && <ReceiptStatus uuid={uuid} token={receiptToken} />}
+      )}
+
       <div className="flex justify-center mt-8">
         <button
-          className="btn btn-ghost btn-primary px-8 font-medium transition-all duration-200"
+          className="btn btn-ghost px-8 font-medium transition-all duration-200 rounded-xl"
           onClick={() => {
             window.location.href = '/';
           }}
@@ -165,6 +247,59 @@ function Result({
         </button>
       </div>
     </>
+  );
+}
+
+interface ResultRowProps {
+  title: string;
+  description: string;
+  value: string;
+  copyId: string;
+  copy: (text: string, id?: string) => void;
+  isCopied: (id?: string) => boolean;
+  t: ReturnType<typeof useTranslation>['t'];
+  mono?: boolean;
+}
+
+function ResultRow({
+  title,
+  description,
+  value,
+  copyId,
+  copy,
+  isCopied,
+  t,
+  mono,
+}: ResultRowProps) {
+  return (
+    <div
+      className="mb-4 p-5 rounded-2xl"
+      style={{
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+        border: '1.5px solid #E0E6F0',
+      }}
+    >
+      <div className="font-semibold text-base mb-1 text-[#3A2E5C]">{title}</div>
+      <div className="text-sm text-[#3A2E5C]/70 mb-4">{description}</div>
+      <div className="flex items-start gap-3">
+        <CopyButton
+          copied={isCopied(copyId)}
+          onClick={() => copy(value, copyId)}
+          title={`Copy ${copyId}`}
+          copyLabel={t('common.copy')}
+          copiedLabel={t('common.copied')}
+        />
+        <div className="flex-1 bg-white border border-[#E0E6F0] rounded-xl px-4 py-3 min-h-[2.5rem] min-w-0">
+          <code
+            className={`text-sm text-[#3A2E5C]/80 break-words leading-relaxed ${
+              mono ? 'font-mono' : ''
+            }`}
+          >
+            {value}
+          </code>
+        </div>
+      </div>
+    </div>
   );
 }
 
