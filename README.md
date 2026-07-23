@@ -6,7 +6,7 @@
 🔐 **one-pass** 是 [jhaals/yopass](https://github.com/jhaals/yopass) 的 fork，
 专门为桃仙 / Dopple 客户打造。核心改动是 **透明加密 UI**：用户在浏览器里
 **亲眼看到**密钥（红框 ❌ 不到服务端）和密文（绿框 ✅ 只传这段），
-不再需要相信服务端不会偷看明文。
+**服务端永远拿不到明文**。
 
 **zero-knowledge 保证**：
 - 加密在浏览器本地完成（OpenPGP / openpgp.js）
@@ -48,9 +48,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 # 前端
 cd website && npm install --legacy-peer-deps && npm run build
 
-# rsync 到目标机
-rsync -avz onepass-server root@140.143.246.15:/opt/onepass/onepass-server
-rsync -avz website/dist/ root@140.143.246.15:/opt/onepass/public/
+# rsync 到目标机（把 $DEPLOY_HOST 换成你自己的服务器）
+rsync -avz onepass-server root@$DEPLOY_HOST:/opt/onepass/onepass-server
+rsync -avz website/dist/ root@$DEPLOY_HOST:/opt/onepass/public/
 
 # systemd unit (/etc/systemd/system/onepass.service)
 [Unit]
@@ -84,4 +84,3 @@ WantedBy=multi-user.target
 
 - 桃仙品牌主站：<https://taoxian.ohoooho.com/>
 - one-pass skill（AI 分享密钥自动用）：见 `skills/one-pass/`
-- 老 yopass 部署（DNS 已删，只走内网）：`http://140.143.246.15:1337`
