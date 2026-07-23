@@ -83,4 +83,4 @@ WantedBy=multi-user.target
 ## 关联项目
 
 - 桃仙品牌主站：<https://taoxian.ohoooho.com/>
-- one-pass skill（AI 分享密钥自动用）：见 `skills/one-pass/`
+- **AI 助理集成**：one-pass 提供标准 OpenPGP 接口 + HTTP API，任何 AI 助理都可以集成（参考实现：基于 SOPS + age + one-pass CLI 的 [OpenClaw workspace skill](https://git.dbhys.com/dbhys/xiandi-world))
