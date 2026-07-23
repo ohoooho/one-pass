@@ -149,7 +149,13 @@
     "receiptExpired": "消息过期前未打开",
     "receiptError": "无法查询读取回执",
     "receiptRefresh": "刷新",
-    "receiptListHint": "之后你也可以在「回执」页面找到它。"
+    "receiptListHint": "之后你也可以在「回执」页面找到它。",
+    "regenerateTitle": "密钥不够随机？",
+    "regenerateDescription": "重新生成一个完全不同的密钥并重新上传，新链接将替换下面的所有链接。旧的会立即失效。",
+    "regenerateButton": "重新生成密钥并重新上传",
+    "regenerating": "重新生成中…",
+    "regenerateFailed": "重新生成失败，请重试",
+    "regenerateNoPlaintext": "需要明文才能重新加密（自动生成模式）"
   },
   "secret": {
     "titleFile": "文件已下载",

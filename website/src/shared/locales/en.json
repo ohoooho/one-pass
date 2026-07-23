@@ -149,7 +149,13 @@
     "receiptExpired": "The secret expired before it was opened",
     "receiptError": "Could not check the read receipt",
     "receiptRefresh": "Refresh",
-    "receiptListHint": "You can also find it later on the Receipts page."
+    "receiptListHint": "You can also find it later on the Receipts page.",
+    "regenerateTitle": "Key isn't random enough?",
+    "regenerateDescription": "Generate a brand-new key and re-upload the ciphertext. The new link below replaces the old one. The old link stops working immediately.",
+    "regenerateButton": "Regenerate key and re-upload",
+    "regenerating": "Regenerating…",
+    "regenerateFailed": "Regeneration failed, please retry",
+    "regenerateNoPlaintext": "Plaintext needed to re-encrypt (auto-generate mode)"
   },
   "secret": {
     "titleFile": "File Downloaded",

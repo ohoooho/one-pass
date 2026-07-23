@@ -10,39 +10,21 @@ import Result from '@features/display-secret/Result';
 type FormValues = {
   expiration: string;
   oneTime: boolean;
-  // Required by SecretOptions' generic constraint but unused in file mode.
   generateKey: boolean;
   customPassword: string;
 };
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50 MB hard client-side cap
-// Server --max-length defaults to 10000 bytes. We base64-encode ciphertext
-// before submit so raw ciphertext must stay < ~7000 bytes to be safe.
-// Documented in help text — anything bigger than ~7 KB plaintext will be
-// rejected by the server. Bigger files: compress before encrypting.
 const SERVER_SAFE_CIPHERTEXT_BYTES = 7000;
 
 interface SelfEncryptedFileModeProps {
-  /** Parent increments this on tab switch to remount us with clean state. */
   resetSignal: number;
 }
 
-/**
- * "I already encrypted my file" mode.
- *
- * The user uploads a ciphertext blob (or pastes base64). We don't touch it —
- * we hand it to the server as the secret message. The user types the key
- * they used, which becomes the #fragment in the URL.
- *
- * The server cannot tell which tool made the ciphertext (gpg/age/openssl/etc).
- * We become a "zero-knowledge pastebin with URL fragment for the key".
- *
- * Why no auto-encrypt: the user picked the tool. They own the trust model.
- */
 export default function SelfEncryptedFileMode({
   resetSignal,
 }: SelfEncryptedFileModeProps) {
-  void resetSignal; // used by parent key remount
+  void resetSignal;
   const { t } = useTranslation();
   const config = useConfig();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,11 +52,7 @@ export default function SelfEncryptedFileMode({
   function readFile(file: File) {
     setError(null);
     if (file.size > MAX_FILE_BYTES) {
-      setError(
-        t('upload.fileTooLarge', {
-          maxSize: '50 MB',
-        }),
-      );
+      setError(t('upload.fileTooLarge', { maxSize: '50 MB' }));
       return;
     }
     const reader = new FileReader();
@@ -156,23 +134,28 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
-      <h2 className="text-3xl font-bold mb-2">
+      <h2 className="text-4xl font-bold mb-2 text-[#3A2E5C] tracking-tight">
         {t('create.fileMode.title')}
       </h2>
-      <p className="text-base-content/70 mb-4">
+      <p className="text-base text-[#3A2E5C]/70 mb-6">
         {t('create.fileMode.subtitle')}
       </p>
 
-      {/* Help: how to encrypt a file yourself */}
-      <details className="mb-6 bg-base-200 rounded-lg p-4">
-        <summary className="cursor-pointer font-semibold text-sm">
+      <details
+        className="mb-6 rounded-2xl p-4"
+        style={{
+          background: 'linear-gradient(135deg, rgba(165, 216, 255, 0.10) 0%, rgba(184, 230, 193, 0.10) 100%)',
+          border: '1.5px solid rgba(165, 216, 255, 0.35)',
+        }}
+      >
+        <summary className="cursor-pointer font-semibold text-sm text-[#3A2E5C]">
           {t('create.fileMode.helpTitle')}
         </summary>
-        <div className="mt-3 text-sm space-y-3">
-          <p className="text-base-content/80">
-            {t('create.fileMode.helpIntro')}
-          </p>
-          <pre className="bg-base-100 rounded p-3 text-xs overflow-x-auto whitespace-pre">{`# gpg (AES-256)
+        <div className="mt-3 text-sm space-y-3 text-[#3A2E5C]/80">
+          <p>{t('create.fileMode.helpIntro')}</p>
+          <pre
+            className="bg-white/80 rounded-xl p-3 text-xs overflow-x-auto whitespace-pre border border-[#E0E6F0] text-[#3A2E5C]/80"
+          >{`# gpg (AES-256)
 gpg --symmetric --cipher-algo AES256 your-file.txt
 
 # age (modern, simple)
@@ -181,7 +164,7 @@ age -p < your-file.txt > encrypted.age
 # openssl
 openssl enc -aes-256-gcm -salt -pbkdf2 \\
   -in your-file.txt -out encrypted.bin`}</pre>
-          <p className="text-xs text-base-content/60">
+          <p className="text-xs text-[#3A2E5C]/60">
             {t('create.fileMode.helpSizeNote', {
               limit: SERVER_SAFE_CIPHERTEXT_BYTES,
             })}
@@ -191,10 +174,15 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
 
       {error && (
         <div
-          className="alert alert-error mb-4 cursor-pointer"
-          onClick={() => setError(null)}
+          className="mb-4 rounded-2xl px-4 py-3 text-sm font-medium"
+          style={{
+            background: 'rgba(254, 226, 226, 0.6)',
+            border: '1.5px solid #FCA5A5',
+            color: '#B91C1C',
+          }}
+          role="alert"
         >
-          <span>{error}</span>
+          {error}
         </div>
       )}
 
@@ -203,11 +191,14 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
         <section className="mb-6">
           <div
             data-testid="file-drop-zone"
-            className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-              dragActive
-                ? 'border-primary bg-base-200'
-                : 'border-base-300 bg-base-100'
+            className={`border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
+              dragActive ? 'border-[#4A95FF]' : 'border-[#E0E6F0]'
             }`}
+            style={{
+              background: dragActive
+                ? 'rgba(74, 149, 255, 0.05)'
+                : 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+            }}
             onDragOver={e => {
               e.preventDefault();
               setDragActive(true);
@@ -236,7 +227,8 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-12 h-12 text-base-content/60"
+                  className="w-12 h-12 text-[#3A2E5C]/50"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -244,13 +236,11 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
                     d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15"
                   />
                 </svg>
-                <div className="mt-2 font-semibold">
+                <div className="mt-2 font-semibold text-[#3A2E5C]">
                   {filename ?? t('create.fileMode.dropzoneText')}
                 </div>
-                <div className="text-sm text-base-content/60">
-                  {t('create.fileMode.maxFileSize', {
-                    size: '50 MB',
-                  })}
+                <div className="text-sm text-[#3A2E5C]/60">
+                  {t('create.fileMode.maxFileSize', { size: '50 MB' })}
                 </div>
               </div>
             </button>
@@ -260,7 +250,7 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
         {/* Ciphertext preview textarea */}
         <section className="mb-6">
           <label className="label" htmlFor="ciphertext">
-            <span className="label-text text-sm font-semibold">
+            <span className="label-text text-sm font-semibold text-[#3A2E5C]">
               {t('create.fileMode.ciphertextLabel')}
             </span>
           </label>
@@ -272,11 +262,11 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
               setCiphertext(e.target.value);
               setFilename(null);
             }}
-            className="textarea textarea-bordered w-full min-h-[120px] text-xs font-mono p-3 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-base-100"
+            className="textarea w-full min-h-[120px] text-xs font-mono p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] bg-white text-[#3A2E5C]"
             placeholder={t('create.fileMode.ciphertextPlaceholder')}
           />
           {ciphertext && (
-            <p className="text-xs text-base-content/60 mt-1">
+            <p className="text-xs text-[#3A2E5C]/60 mt-1">
               {t('create.fileMode.ciphertextSize', {
                 size: ciphertext.length.toLocaleString(),
                 limit: SERVER_SAFE_CIPHERTEXT_BYTES.toLocaleString(),
@@ -288,7 +278,7 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
         {/* Custom key (REQUIRED — never generated in this mode) */}
         <section className="mb-6">
           <label className="label" htmlFor="customKey">
-            <span className="label-text text-sm font-semibold">
+            <span className="label-text text-sm font-semibold text-[#3A2E5C]">
               {t('create.fileMode.keyLabel')}
             </span>
           </label>
@@ -297,11 +287,11 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
             type="text"
             value={customKey}
             onChange={e => setCustomKey(e.target.value)}
-            className="input input-bordered w-full rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono text-sm"
+            className="input w-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] font-mono text-sm bg-white text-[#3A2E5C] h-12 px-4"
             placeholder={t('create.fileMode.keyPlaceholder')}
             data-testid="file-key"
           />
-          <p className="text-xs text-base-content/60 mt-1">
+          <p className="text-xs text-[#3A2E5C]/60 mt-1">
             {t('create.fileMode.keyHint')}
           </p>
         </section>
@@ -313,24 +303,28 @@ openssl enc -aes-256-gcm -salt -pbkdf2 \\
           setOneTime={setOneTime}
           generateKey={false}
           setGenerateKey={() => {
-            /* noop — this mode always requires user-supplied key */
+            /* noop */
           }}
           customPassword={customKey}
           setCustomPassword={setCustomKey}
           requireAuth={false}
           setRequireAuth={() => {
-            /* noop — keep behavior parity with text mode */
+            /* noop */
           }}
           readReceipt={readReceipt}
           setReadReceipt={setReadReceipt}
           expirationLabel={t('create.fileMode.expirationLabel')}
         />
 
-        <div className="form-control mt-8">
+        <div className="mt-8">
           <button
             type="submit"
-            className="btn btn-primary w-full h-12 text-base font-semibold rounded-lg transition-all duration-200"
             disabled={!ciphertext || !customKey}
+            className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+              color: 'white',
+            }}
             data-testid="file-submit"
           >
             {t('create.fileMode.submit')}

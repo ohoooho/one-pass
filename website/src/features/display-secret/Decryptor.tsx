@@ -16,8 +16,6 @@ import {
 import EnterDecryptionKey from './EnterDecryptionKey';
 import FileDownloadedCard from './FileDownloadedCard';
 
-// Secrets longer than this render no QR code option; the dense codes are
-// unreadable and many encoders reject them.
 const maxQRCodeLength = 500;
 
 export default function Decryptor({ secret }: { secret: string }) {
@@ -38,7 +36,6 @@ export default function Decryptor({ secret }: { secret: string }) {
     );
 
     if (format === 'f') {
-      // For files, return an object with binary data and filename
       return {
         data: message.data as Uint8Array,
         filename: (message as { filename?: string }).filename || 'download',
@@ -54,7 +51,6 @@ export default function Decryptor({ secret }: { secret: string }) {
 
   const tooLongForQRCode = value && value?.data?.length > maxQRCodeLength;
 
-  // Automatically download file when decrypted
   useEffect(() => {
     if (value && value.isFile) {
       downloadBlob(
@@ -82,13 +78,12 @@ export default function Decryptor({ secret }: { secret: string }) {
     );
   }
 
-  // Show different UI for files vs text secrets
   if (value && value.isFile) {
     return (
       <>
         <FileDownloadedCard filename={value.filename || 'download'} />
         <button
-          className="btn btn-primary flex items-center gap-2 min-w-[200px]"
+          className="btn btn-primary flex items-center gap-2 min-w-[200px] rounded-2xl"
           onClick={() =>
             downloadBlob(
               new Uint8Array(value.data as Uint8Array),
@@ -108,15 +103,21 @@ export default function Decryptor({ secret }: { secret: string }) {
     <>
       <div className="flex items-center mb-2">
         <UnlockIcon className="h-8 w-8 text-success mr-2" />
-        <h2 className="text-3xl font-bold">{t('secret.titleMessage')}</h2>
+        <h2 className="text-3xl font-bold text-[#3A2E5C]">{t('secret.titleMessage')}</h2>
       </div>
-      <p className="mb-6 text-base-content/70">{t('secret.subtitleMessage')}</p>
-      <div className="mb-8 bg-base-200/70 border border-base-300 rounded-lg p-6 text-base font-mono whitespace-pre-wrap min-h-[120px] text-base-content break-words">
+      <p className="mb-6 text-[#3A2E5C]/70">{t('secret.subtitleMessage')}</p>
+      <div
+        className="mb-8 rounded-2xl p-6 text-base font-mono whitespace-pre-wrap min-h-[120px] text-[#3A2E5C] break-words"
+        style={{
+          background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+          border: '1.5px solid #B8E6C1',
+        }}
+      >
         {value.data as string}
       </div>
       <div className="flex flex-wrap gap-4 justify-center mb-6">
         <button
-          className="btn btn-primary flex items-center gap-3 px-8 font-medium shadow-sm hover:shadow transition-all duration-200"
+          className="btn btn-primary flex items-center gap-3 px-8 font-medium shadow-sm hover:shadow transition-all duration-200 rounded-2xl"
           onClick={handleCopy}
           aria-label={t('secret.buttonCopyToClipboard')}
         >
@@ -128,7 +129,7 @@ export default function Decryptor({ secret }: { secret: string }) {
 
         {!tooLongForQRCode && (
           <button
-            className="btn btn-outline btn-primary flex items-center gap-3 px-8 font-medium shadow-sm hover:shadow transition-all duration-200"
+            className="btn btn-outline btn-primary flex items-center gap-3 px-8 font-medium shadow-sm hover:shadow transition-all duration-200 rounded-2xl"
             onClick={() => setShowQR(v => !v)}
             type="button"
             aria-label={
@@ -146,7 +147,10 @@ export default function Decryptor({ secret }: { secret: string }) {
       </div>
       {showQR && !tooLongForQRCode && (
         <div className="mt-8 flex justify-center">
-          <div className="bg-base-100 border border-base-300 rounded-lg p-6 shadow-sm">
+          <div
+            className="bg-white rounded-2xl p-6 shadow-sm"
+            style={{ border: '1.5px solid #E0E6F0' }}
+          >
             <QRCodeSVG
               size={250}
               style={{ height: 'auto' }}
