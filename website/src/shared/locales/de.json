@@ -3,7 +3,6 @@
     "title": "Nachricht verschlüsseln",
     "inputSecretLabel": "Dein Geheimnis",
     "inputSecretPlaceholder": "Gib dein Geheimnis ein...",
-    "buttonEncrypt": "Nachricht verschlüsseln",
     "inputCustomPasswordLabel": "Eigenes Passwort",
     "inputCustomPasswordPlaceholder": "Gib dein Passwort ein...",
     "inputOneTimeLabel": "Einmaliger Download",

@@ -5,7 +5,7 @@ import { postSecret } from '@shared/lib/api';
 import { saveNewReceipt } from '@shared/lib/receiptStore';
 import { useConfig } from '@shared/hooks/useConfig';
 import { SecretOptions } from '@shared/components/SecretOptions';
-import { ShieldIcon } from '@shared/components/icons';
+import { KeyIcon, LockIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
 
 type FormValues = {
@@ -20,6 +20,13 @@ interface SelfEncryptedFileModeProps {
   resetSignal: number;
 }
 
+/**
+ * File mode — user already encrypted the file themselves (gpg/age/openssl),
+ * we just store the ciphertext verbatim and put their key in the URL #.
+ *
+ * v5 (2026-07-24): matched the TextSecretMode layout — form on the left,
+ * auxiliary "about / key / ciphertext" sidebar on the right, no big h1.
+ */
 export default function SelfEncryptedFileMode({
   resetSignal,
 }: SelfEncryptedFileModeProps) {
@@ -124,7 +131,6 @@ export default function SelfEncryptedFileMode({
         password={result.password}
         uuid={result.uuid}
         prefix="s"
-        customPassword
         oneTime={config.FORCE_ONETIME_SECRETS || oneTime}
         receiptToken={receiptToken}
       />
@@ -133,110 +139,18 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
-      {/* ── Hero band (single-column only; on wide layouts it lives in the sidebar) ── */}
-      <div className="text-center mb-6 sm:mb-8 wide:hidden">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-[#3A2E5C] tracking-tight">
-          {t('create.fileMode.title')}
-        </h2>
-        <p className="text-base sm:text-lg text-[#3A2E5C]/70 max-w-2xl mx-auto leading-relaxed">
-          {t('create.fileMode.subtitle')}
-        </p>
-      </div>
+      {/* v5: small hero subtitle (replaces the giant h1 in v4).
+          Uses the same text on both narrow and wide layouts. */}
+      <h2 className="text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
+        {t('create.fileMode.subtitle')}
+      </h2>
 
-      {/* ── v4 responsive grid (≥1920px two columns) ─────────────── */}
+      {/* ── v5 responsive grid ────────────────────────────────────
+            <1920px: single column, form first, auxiliary info below
+            ≥1920px : 7/5 two-column with form on the LEFT */}
       <div className="wide:grid wide:grid-cols-12 wide:gap-10 wide:items-start">
-        <aside className="hidden wide:block wide:col-span-5 wide:sticky wide:top-8">
-          <div className="space-y-7">
-            <div>
-              <h2 className="text-4xl xl:text-5xl font-bold mb-4 text-[#3A2E5C] tracking-tight leading-tight">
-                {t('create.fileMode.title')}
-              </h2>
-              <p className="text-base xl:text-lg text-[#3A2E5C]/70 leading-relaxed">
-                {t('create.fileMode.subtitle')}
-              </p>
-            </div>
-
-            <ul className="space-y-5">
-              <li className="flex gap-3">
-                <ShieldIcon className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-[#3A2E5C] text-base">
-                    {t('create.benefit1Title')}
-                  </p>
-                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
-                    {t('create.benefit1Desc')}
-                  </p>
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-                  />
-                </svg>
-                <div>
-                  <p className="font-semibold text-[#3A2E5C] text-base">
-                    {t('create.benefit2Title')}
-                  </p>
-                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
-                    {t('create.benefit2Desc')}
-                  </p>
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 12.75a1.5 1.5 0 0 0 1.5-1.5V7.5a1.5 1.5 0 0 0-3 0v3.75a1.5 1.5 0 0 0 1.5 1.5Z"
-                  />
-                </svg>
-                <div>
-                  <p className="font-semibold text-[#3A2E5C] text-base">
-                    {t('create.benefit3Title')}
-                  </p>
-                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
-                    {t('create.benefit3Desc')}
-                  </p>
-                </div>
-              </li>
-            </ul>
-
-            <div className="pt-6 border-t border-[#E0E6F0] space-y-1.5">
-              <p className="text-sm font-semibold text-[#3A2E5C]/80">
-                {t('create.trustStrip')}
-              </p>
-              <p className="text-xs text-[#3A2E5C]/60 leading-relaxed">
-                {t('create.trustNote')}
-              </p>
-            </div>
-          </div>
-        </aside>
-
-        <div className="wide:col-span-7">
+        {/* ── LEFT (form) — primary action ─────────────────────── */}
+        <div className="wide:col-span-7 wide:order-1">
 
       <details
         className="mb-6 sm:mb-8 rounded-2xl p-4 sm:p-5"
@@ -446,6 +360,68 @@ export default function SelfEncryptedFileMode({
         </div>
       </div>
         </div>
+
+        {/* ── RIGHT (auxiliary) — quieter concept column ───────── */}
+        <aside className="wide:col-span-5 wide:order-2 mt-8 wide:mt-0 wide:sticky wide:top-8 space-y-5 wide:space-y-6">
+          <div>
+            <h3 className="text-base font-semibold text-[#3A2E5C] mb-2 flex items-center gap-2">
+              <LockIcon className="h-5 w-5 text-[#4A95FF] shrink-0" />
+              {t('create.sidebar.aboutTitle')}
+            </h3>
+            <p className="text-sm text-[#3A2E5C]/70 leading-relaxed">
+              {t('create.sidebar.aboutBody')}
+            </p>
+          </div>
+
+          <div
+            className="rounded-2xl p-4"
+            style={{
+              background: 'rgba(165, 216, 255, 0.10)',
+              border: '1px solid rgba(165, 216, 255, 0.30)',
+            }}
+          >
+            <div className="flex items-start gap-2.5">
+              <KeyIcon className="h-5 w-5 text-[#4A95FF] shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-[#3A2E5C]">
+                  {t('create.sidebar.keyTitle')}
+                </p>
+                <p className="text-xs text-[#3A2E5C]/65 leading-relaxed mt-1">
+                  {t('create.sidebar.keyBody')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="rounded-2xl p-4"
+            style={{
+              background: 'rgba(184, 230, 193, 0.15)',
+              border: '1px solid rgba(125, 211, 192, 0.30)',
+            }}
+          >
+            <div className="flex items-start gap-2.5">
+              <LockIcon className="h-5 w-5 text-[#4A95FF] shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-[#3A2E5C]">
+                  {t('create.sidebar.cipherTitle')}
+                </p>
+                <p className="text-xs text-[#3A2E5C]/65 leading-relaxed mt-1">
+                  {t('create.sidebar.cipherBody')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-[#E0E6F0] space-y-1.5">
+            <p className="text-sm font-semibold text-[#3A2E5C]/80">
+              {t('create.trustStrip')}
+            </p>
+            <p className="text-xs text-[#3A2E5C]/60 leading-relaxed">
+              {t('create.trustNote')}
+            </p>
+          </div>
+        </aside>
       </div>
     </>
   );

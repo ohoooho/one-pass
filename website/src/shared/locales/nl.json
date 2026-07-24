@@ -3,7 +3,6 @@
     "title": "Versleutel bericht",
     "inputSecretLabel": "Jouw geheim",
     "inputSecretPlaceholder": "Voer je geheim in...",
-    "buttonEncrypt": "Bericht versleutelen",
     "inputCustomPasswordLabel": "Aangepast wachtwoord",
     "inputCustomPasswordPlaceholder": "Voer je wachtwoord in...",
     "inputOneTimeLabel": "Eenmalige download",

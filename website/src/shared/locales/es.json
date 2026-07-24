@@ -3,7 +3,6 @@
     "title": "Cifrar mensaje",
     "inputSecretLabel": "Su secreto",
     "inputSecretPlaceholder": "Introduzca su secreto...",
-    "buttonEncrypt": "Cifrar mensaje",
     "inputCustomPasswordLabel": "Contraseña personalizada",
     "inputCustomPasswordPlaceholder": "Contraseña a introducir...",
     "inputOneTimeLabel": "Una sola descarga",

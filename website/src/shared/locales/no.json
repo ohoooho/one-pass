@@ -3,7 +3,6 @@
     "title": "Krypter melding",
     "inputSecretLabel": "Hemmeligheten din",
     "inputSecretPlaceholder": "Oppgi hemmeligheten din...",
-    "buttonEncrypt": "Krypter melding",
     "inputCustomPasswordLabel": "Egendefinert passord",
     "inputCustomPasswordPlaceholder": "Oppgi passordet ditt...",
     "inputOneTimeLabel": "Kun én nedlasting",

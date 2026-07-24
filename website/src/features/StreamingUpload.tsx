@@ -34,7 +34,6 @@ export default function StreamingUpload() {
     result,
     setResult,
     getPassword,
-    isCustomPassword,
   } = useSecretForm();
 
   const { register, handleSubmit, setValue } = useForm<FormValues>({
@@ -160,7 +159,6 @@ export default function StreamingUpload() {
       setResult({
         password: pw,
         uuid: res.message,
-        customPassword: isCustomPassword(),
       });
     } catch (err) {
       setError((err as Error).message);
@@ -174,7 +172,6 @@ export default function StreamingUpload() {
         password={result.password}
         uuid={result.uuid}
         prefix="f"
-        customPassword={result.customPassword}
         oneTime={config?.FORCE_ONETIME_SECRETS || oneTime}
         receiptToken={receiptToken}
       />

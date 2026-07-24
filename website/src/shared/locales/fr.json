@@ -3,7 +3,6 @@
     "title": "Chiffrer le message",
     "inputSecretLabel": "Votre secret",
     "inputSecretPlaceholder": "Message à chiffrer...",
-    "buttonEncrypt": "Chiffrer le message",
     "inputCustomPasswordLabel": "Mot de passe personnalisé",
     "inputCustomPasswordPlaceholder": "Entrez votre mot de passe...",
     "inputOneTimeLabel": "Téléchargeable une seule fois",

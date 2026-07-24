@@ -3,7 +3,6 @@
     "title": "Зашифровать сообщение",
     "inputSecretLabel": "Ваш секрет",
     "inputSecretPlaceholder": "Введите ваш секрет...",
-    "buttonEncrypt": "Зашифровать",
     "inputCustomPasswordLabel": "Собственный пароль",
     "inputCustomPasswordPlaceholder": "Введите пароль...",
     "inputOneTimeLabel": "Одноразовая загрузка",

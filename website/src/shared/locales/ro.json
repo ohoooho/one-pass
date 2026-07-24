@@ -3,7 +3,6 @@
     "title": "Criptează mesaj",
     "inputSecretLabel": "Secretul tău",
     "inputSecretPlaceholder": "Introdu secretul tău...",
-    "buttonEncrypt": "Criptează mesajul",
     "inputCustomPasswordLabel": "Parolă personalizată",
     "inputCustomPasswordPlaceholder": "Introdu parola...",
     "inputOneTimeLabel": "Descărcare unică",

@@ -3,7 +3,6 @@
     "title": "Crittografa messaggio",
     "inputSecretLabel": "Il tuo segreto",
     "inputSecretPlaceholder": "Inserisci il tuo segreto...",
-    "buttonEncrypt": "Crittografa messaggio",
     "inputCustomPasswordLabel": "Password personalizzata",
     "inputCustomPasswordPlaceholder": "Inserisci la tua password...",
     "inputOneTimeLabel": "Scaricabile una sola volta",
