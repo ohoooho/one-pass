@@ -20,7 +20,7 @@ test.describe('Navigation', () => {
     await page.waitForLoadState('networkidle');
 
     // Should show the main features or create secret form
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
   });
 
   test('should navigate to upload page', async ({ page }) => {
@@ -111,7 +111,7 @@ test.describe('Navigation', () => {
     // Start at home
     await page.goto('/#/');
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
 
     // Navigate to upload
     await page.goto('/#/upload');
@@ -121,7 +121,7 @@ test.describe('Navigation', () => {
     // Go back
     await page.goBack();
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
 
     // Go forward
     await page.goForward();

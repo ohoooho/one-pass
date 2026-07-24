@@ -462,7 +462,7 @@ test.describe('File Download', () => {
     });
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should show result page
     await expect(

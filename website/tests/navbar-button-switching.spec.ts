@@ -79,7 +79,7 @@ test.describe('Navbar Button Switching', () => {
     await page.waitForLoadState('networkidle');
 
     // Verify we're on home page and Upload button is now visible
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
     const uploadButton = page.locator('a[href="#/upload"]');
     await expect(uploadButton).toBeVisible();
     await expect(textButton).not.toBeVisible();

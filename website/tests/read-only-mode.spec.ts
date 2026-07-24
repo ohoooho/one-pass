@@ -41,7 +41,7 @@ test.describe('Read-Only Mode', () => {
 
     // Create form should not be visible
     await expect(
-      page.locator('h2:has-text("Encrypt message")'),
+      page.locator('h2:has-text("Browser-side encryption")'),
     ).not.toBeVisible();
     await expect(
       page.locator('textarea[placeholder="Enter your secret..."]'),
@@ -120,7 +120,7 @@ test.describe('Read-Only Mode', () => {
     await page.waitForLoadState('networkidle');
 
     // Create form should be visible
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
     await expect(
       page.locator('textarea[placeholder="Enter your secret..."]'),
     ).toBeVisible();

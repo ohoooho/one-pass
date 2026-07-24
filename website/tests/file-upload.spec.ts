@@ -46,8 +46,8 @@ test.describe('File Upload', () => {
     ).not.toBeVisible();
 
     // Check submit button is disabled by default (no file selected)
-    await expect(page.locator('button[type="submit"]')).toBeDisabled();
-    await expect(page.locator('button[type="submit"]')).toContainText(
+    await expect(page.locator('[data-testid="submit-create"]')).toBeDisabled();
+    await expect(page.locator('[data-testid="submit-create"]')).toContainText(
       'Upload File',
     );
   });
@@ -69,7 +69,7 @@ test.describe('File Upload', () => {
     await expect(page.locator(`text=${testFiles.textFile.name}`)).toBeVisible();
 
     // Check submit button is now enabled
-    await expect(page.locator('button[type="submit"]')).toBeEnabled();
+    await expect(page.locator('[data-testid="submit-create"]')).toBeEnabled();
   });
 
   test('should upload file with default settings', async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe('File Upload', () => {
     });
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -141,7 +141,7 @@ test.describe('File Upload', () => {
     );
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -189,7 +189,7 @@ test.describe('File Upload', () => {
     });
 
     await expect(page.locator(`text=${testFiles.jsonFile.name}`)).toBeVisible();
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -210,7 +210,7 @@ test.describe('File Upload', () => {
     await expect(
       page.locator(`text=${testFiles.binaryFile.name}`),
     ).toBeVisible();
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -230,7 +230,7 @@ test.describe('File Upload', () => {
     });
 
     await expect(page.locator(`text=${testFiles.textFile.name}`)).toBeVisible();
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -258,7 +258,7 @@ test.describe('File Upload', () => {
 
   test('should show error when no file is selected', async ({ page }) => {
     // Button should be disabled when no file is selected
-    await expect(page.locator('button[type="submit"]')).toBeDisabled();
+    await expect(page.locator('[data-testid="submit-create"]')).toBeDisabled();
 
     // Verify we're still on the upload form
     await expect(page.locator('h2:has-text("Upload file")')).toBeVisible();
@@ -274,7 +274,7 @@ test.describe('File Upload', () => {
       buffer: Buffer.from(fileContent),
     });
 
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should show error message
     await expect(page.locator('.alert-error')).toContainText('Upload failed');
@@ -293,7 +293,7 @@ test.describe('File Upload', () => {
       buffer: Buffer.from(fileContent),
     });
 
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should show error
     const errorAlert = page.locator('.alert-error');
@@ -322,7 +322,7 @@ test.describe('File Upload', () => {
 
     // Test One Day expiration (86400 seconds)
     await page.check('input[value="86400"]');
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -348,7 +348,7 @@ test.describe('File Upload', () => {
       buffer: Buffer.from(fileContent),
     });
     await page.check('input[value="604800"]');
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -378,7 +378,7 @@ test.describe('File Upload', () => {
       .nth(0)
       .uncheck({ force: true }); // First form checkbox is one-time
 
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -435,7 +435,7 @@ test.describe('File Upload', () => {
     );
 
     // Submit button should be disabled since file was rejected
-    await expect(page.locator('button[type="submit"]')).toBeDisabled();
+    await expect(page.locator('[data-testid="submit-create"]')).toBeDisabled();
   });
 
   test('should validate complete file upload with all settings', async ({
@@ -479,7 +479,7 @@ test.describe('File Upload', () => {
     );
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -529,7 +529,7 @@ test.describe('File Upload', () => {
       buffer: Buffer.from(testFiles.binaryFile.content),
     });
 
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),

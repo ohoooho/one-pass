@@ -11,10 +11,12 @@ export interface SecretFormState {
   result: {
     password: string;
     uuid: string;
+    customPassword: boolean;
   };
   setResult: (result: {
     password: string;
     uuid: string;
+    customPassword: boolean;
   }) => void;
   getPassword: () => string;
   isCustomPassword: () => boolean;
@@ -27,6 +29,7 @@ export function useSecretForm(): SecretFormState {
   const [result, setResult] = useState({
     password: '',
     uuid: '',
+    customPassword: false,
   });
 
   function getPassword() {

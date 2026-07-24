@@ -19,8 +19,10 @@ test.describe('Create Secret', () => {
   test('should display create secret form with default values', async ({
     page,
   }) => {
-    // Check page title
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    // Check v5 small hero subtitle (replaces the giant "Encrypt message" h1)
+    await expect(
+      page.locator('h2:has-text("Browser-side encryption")'),
+    ).toBeVisible();
 
     // Check form fields are present
     await expect(
@@ -47,9 +49,9 @@ test.describe('Create Secret', () => {
       page.locator('input[placeholder="Enter your password..."]'),
     ).not.toBeVisible();
 
-    // Check submit button
-    await expect(page.locator('button[type="submit"]')).toContainText(
-      'Encrypt Message',
+    // v5 (2026-07-24): button text changed to "Generate link" (Yopass original).
+    await expect(page.locator('[data-testid="submit-create"]')).toContainText(
+      'Generate link',
     );
   });
 
@@ -63,7 +65,7 @@ test.describe('Create Secret', () => {
     );
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -123,7 +125,7 @@ test.describe('Create Secret', () => {
     );
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -171,7 +173,7 @@ test.describe('Create Secret', () => {
       testSecrets.simple.message,
     );
     await page.check('input[value="86400"]');
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -189,7 +191,7 @@ test.describe('Create Secret', () => {
       testSecrets.simple.message,
     );
     await page.check('input[value="604800"]');
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -215,7 +217,7 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -237,21 +239,21 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should show error message
     await expect(page.locator('.text-red-600')).toContainText('Server error');
 
     // Should stay on the form page
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
   });
 
   test('should require secret text to submit', async ({ page }) => {
     // Try to submit empty form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should stay on form (no redirect to result)
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
   });
 
   test('should copy URL to clipboard on result page', async ({ page }) => {
@@ -261,7 +263,7 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should be on result page
     await expect(
@@ -285,7 +287,7 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should have copy buttons for different link types
     await expect(
@@ -311,7 +313,7 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should eventually show timeout error
     await expect(page.locator('.text-red-600')).toContainText(
@@ -352,7 +354,7 @@ test.describe('Create Secret', () => {
     );
 
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should redirect to result page
     await expect(
@@ -408,7 +410,7 @@ test.describe('Create Secret', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Should be on result page
     await expect(

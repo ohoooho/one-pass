@@ -23,7 +23,7 @@ test.describe('Read receipts', () => {
 
   test('toggle is hidden without the licensed feature', async ({ page }) => {
     await setup(page, false);
-    await expect(page.locator('h2:has-text("Encrypt message")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Browser-side encryption")')).toBeVisible();
     await expect(page.locator(RECEIPT_TOGGLE)).not.toBeVisible();
   });
 
@@ -45,7 +45,7 @@ test.describe('Read receipts', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -80,7 +80,7 @@ test.describe('Read receipts', () => {
       testSecrets.simple.message,
     );
     await page.check(RECEIPT_TOGGLE);
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -141,7 +141,7 @@ test.describe('Read receipts', () => {
       testSecrets.simple.message,
     );
     await page.check(RECEIPT_TOGGLE);
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('[data-testid="receipt-status-expired"]'),
@@ -175,7 +175,7 @@ test.describe('Receipts page', () => {
       testSecrets.simple.message,
     );
     await page.check(RECEIPT_TOGGLE);
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
     ).toBeVisible();
@@ -338,7 +338,7 @@ test.describe('Receipts page', () => {
       buffer: Buffer.from('file secret'),
     });
     await page.check(RECEIPT_TOGGLE);
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),

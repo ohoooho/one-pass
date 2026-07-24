@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { LinkIcon } from '@shared/components/icons';
+import { InfoPopover } from '@shared/components/InfoPopover';
 
 interface EncryptButtonProps {
   loading: boolean;
@@ -8,11 +9,12 @@ interface EncryptButtonProps {
 }
 
 /**
- * The main "生成链接" button — Yopass-style single primary action.
+ * The main "生成链接" button.
  *
- * v5 (2026-07-24): renamed from "加密消息" → "生成链接" (i18n: create.buttonSubmit).
- * The button no longer carries the info popover, since the key is now
- * auto-generated internally and not exposed to the user.
+ * v5 (2026-07-24):
+ *  - Renamed from 加密消息 → 生成链接 (Yopass original).
+ *  - Switched LockIcon → LinkIcon to match the new wording.
+ *  - Kept the InfoPopover (still useful — explains what the link will look like).
  */
 export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProps) {
   const { t } = useTranslation();
@@ -41,6 +43,11 @@ export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProp
           <>
             <LinkIcon className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
             <span>{t('create.buttonSubmit')}</span>
+            <InfoPopover
+              titleKey="create.infoA6Title"
+              bodyKey="create.infoA6Body"
+              className="ml-1"
+            />
           </>
         )}
       </button>
