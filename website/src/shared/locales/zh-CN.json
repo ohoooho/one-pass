@@ -74,7 +74,17 @@
     "errorNoKey": "请先输入密钥",
     "errorNoPlaintext": "请先输入要加密的内容",
     "errorGeneric": "加密失败，请重试",
-    "reassurance": "明文与密钥永远留在你的浏览器中。one-pass 服务端只能看到一段不可解的密文（OpenPGP + AES-256），无法看到密钥，也无法解出明文。"
+    "reassurance": "明文与密钥永远留在你的浏览器中。one-pass 服务端只能看到一段不可解的密文（OpenPGP + AES-256），无法看到密钥，也无法解出明文。",
+    "sidebarTitle": "为什么 one-pass 是 zero-knowledge",
+    "sidebarTagline": "服务端永远拿不到明文。浏览器是唯一的加密者。",
+    "benefit1Title": "明文与密钥永不离开你的浏览器",
+    "benefit1Desc": "加密和解密全部在你的浏览器里完成。密钥通过 URL # 后传递，HTTP 协议保证 # 后内容不到服务端。",
+    "benefit2Title": "服务端只看到不可解的密文",
+    "benefit2Desc": "OpenPGP + AES-256 在本地加密，只把密文上传。没有密钥，服务端永远无法还原明文。",
+    "benefit3Title": "链接阅后即焚",
+    "benefit3Desc": "密文可一次性销毁，首次解密后服务端立即删除链接，无法被第二次打开。",
+    "trustStrip": "⭐ GitHub · Apache-2.0 · fork 自 jhaals/yopass",
+    "trustNote": "全栈代码开源可审计，不打日志、不收集 IP、不跑第三方。"
   },
   "upload": {
     "title": "上传文件",
