@@ -58,7 +58,7 @@ export default function SettingsMenu() {
         aria-label={t('settings.title')}
         title={t('settings.title')}
         data-testid="settings-menu-button"
-        className="p-2 rounded-md hover:bg-base-200 transition-all duration-200 text-base-content hover:text-primary cursor-pointer"
+        className="p-2 rounded-full hover:bg-white/70 transition-all duration-200 text-[#3A2E5C]/75 hover:text-[#3A2E5C] cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +66,7 @@ export default function SettingsMenu() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5"
+          className="w-[22px] h-[22px]"
         >
           <path
             strokeLinecap="round"
