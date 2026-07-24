@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { LockIcon } from '@shared/components/icons';
-import { InfoPopover } from '@shared/components/InfoPopover';
+import { LinkIcon } from '@shared/components/icons';
 
 interface EncryptButtonProps {
   loading: boolean;
@@ -9,11 +8,11 @@ interface EncryptButtonProps {
 }
 
 /**
- * The main "加密消息" button.
+ * The main "生成链接" button — Yopass-style single primary action.
  *
- * v3 (2026-07-23): uses SVG LockIcon instead of inline SVG lock path so the
- * icon scales with the button. Slightly larger h-16 for better thumb target
- * on mobile.
+ * v5 (2026-07-24): renamed from "加密消息" → "生成链接" (i18n: create.buttonSubmit).
+ * The button no longer carries the info popover, since the key is now
+ * auto-generated internally and not exposed to the user.
  */
 export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProps) {
   const { t } = useTranslation();
@@ -36,17 +35,12 @@ export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProp
               className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
               aria-hidden="true"
             />
-            <span>{t('create.encryptingMessage')}</span>
+            <span>{t('create.buttonSubmitLoading')}</span>
           </>
         ) : (
           <>
-            <LockIcon className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
-            <span>{t('create.buttonEncrypt')}</span>
-            <InfoPopover
-              titleKey="create.infoA6Title"
-              bodyKey="create.infoA6Body"
-              className="ml-1"
-            />
+            <LinkIcon className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
+            <span>{t('create.buttonSubmit')}</span>
           </>
         )}
       </button>

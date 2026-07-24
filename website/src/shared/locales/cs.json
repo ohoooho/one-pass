@@ -3,7 +3,6 @@
     "title": "Zašifrovat zprávu",
     "inputSecretLabel": "Vaše tajná zpráva",
     "inputSecretPlaceholder": "Zadejte svou tajnou zprávu...",
-    "buttonEncrypt": "Zašifrovat tajnou zprávu",
     "inputCustomPasswordLabel": "Vlastní heslo",
     "inputCustomPasswordPlaceholder": "Zadejte své heslo...",
     "inputOneTimeLabel": "Jednorázové stažení",

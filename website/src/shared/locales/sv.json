@@ -3,7 +3,6 @@
     "title": "Kryptera meddelande",
     "inputSecretLabel": "Ditt meddelande",
     "inputSecretPlaceholder": "Ange ditt meddelande...",
-    "buttonEncrypt": "Kryptera meddelande",
     "inputCustomPasswordLabel": "Eget lösenord",
     "inputCustomPasswordPlaceholder": "Ange ditt lösenord...",
     "inputOneTimeLabel": "Endast en nedladdning",

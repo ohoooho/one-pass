@@ -3,7 +3,6 @@
     "title": "メッセージを暗号化",
     "inputSecretLabel": "秘密の内容",
     "inputSecretPlaceholder": "秘密の内容を入力...",
-    "buttonEncrypt": "メッセージを暗号化",
     "inputCustomPasswordLabel": "カスタムパスワード",
     "inputCustomPasswordPlaceholder": "パスワードを入力...",
     "inputOneTimeLabel": "1回限りのダウンロード",
