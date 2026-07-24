@@ -2,3 +2,7 @@
 @plugin "daisyui" {
   themes: all;
 }
+
+/* v4 custom breakpoint: 1920px+ (2K / 4K ultra-wide).
+   Lets us use `wide:grid-cols-12` etc. in TextSecretMode v4. */
+@variant wide (@media (min-width: 1920px));

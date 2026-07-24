@@ -62,7 +62,7 @@ export default function App() {
         <main
           id="main-content"
           tabIndex={-1}
-          className="w-full max-w-5xl mx-auto mb-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="w-full max-w-5xl wide:max-w-none mx-auto mb-auto px-4 sm:px-6 lg:px-8 wide:px-12 py-10 sm:py-14 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="card bg-base-100 shadow-sm border border-base-300 lg:border-0 lg:shadow-none">
             <div className="card-body p-5 sm:p-8 lg:p-0">

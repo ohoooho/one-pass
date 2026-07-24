@@ -74,7 +74,17 @@
     "errorNoKey": "Enter a key first",
     "errorNoPlaintext": "Enter the content to encrypt first",
     "errorGeneric": "Encryption failed, please retry",
-    "reassurance": "Your plaintext and key never leave your browser. The one-pass server only sees undecryptable ciphertext (OpenPGP + AES-256) — it has no key, so it can never read your plaintext."
+    "reassurance": "Your plaintext and key never leave your browser. The one-pass server only sees undecryptable ciphertext (OpenPGP + AES-256) — it has no key, so it can never read your plaintext.",
+    "sidebarTitle": "Why one-pass is zero-knowledge",
+    "sidebarTagline": "The server can never see your plaintext. Your browser is the only place that encrypts.",
+    "benefit1Title": "Plaintext & key never leave your browser",
+    "benefit1Desc": "Encrypt and decrypt happen locally in your browser. The key rides the URL # fragment, and HTTP guarantees fragments never reach the server.",
+    "benefit2Title": "Server only sees undecryptable ciphertext",
+    "benefit2Desc": "OpenPGP + AES-256 happens locally, only the ciphertext is uploaded. Without the key the server can never recover your plaintext.",
+    "benefit3Title": "Burn-after-reading links",
+    "benefit3Desc": "Ciphertext can be set to self-destruct after the first decryption. The link stops working immediately and can't be opened again.",
+    "trustStrip": "⭐ GitHub · Apache-2.0 · forked from jhaals/yopass",
+    "trustNote": "Full-stack open source, auditable code, no logs, no IP collection, no third-party trackers."
   },
   "upload": {
     "title": "Upload file",

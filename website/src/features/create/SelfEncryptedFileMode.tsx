@@ -5,6 +5,7 @@ import { postSecret } from '@shared/lib/api';
 import { saveNewReceipt } from '@shared/lib/receiptStore';
 import { useConfig } from '@shared/hooks/useConfig';
 import { SecretOptions } from '@shared/components/SecretOptions';
+import { ShieldIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
 
 type FormValues = {
@@ -132,8 +133,8 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
-      {/* ── Hero band: title + subtitle ─────────────────────────── */}
-      <div className="text-center mb-6 sm:mb-8">
+      {/* ── Hero band (single-column only; on wide layouts it lives in the sidebar) ── */}
+      <div className="text-center mb-6 sm:mb-8 wide:hidden">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-[#3A2E5C] tracking-tight">
           {t('create.fileMode.title')}
         </h2>
@@ -141,6 +142,101 @@ export default function SelfEncryptedFileMode({
           {t('create.fileMode.subtitle')}
         </p>
       </div>
+
+      {/* ── v4 responsive grid (≥1920px two columns) ─────────────── */}
+      <div className="wide:grid wide:grid-cols-12 wide:gap-10 wide:items-start">
+        <aside className="hidden wide:block wide:col-span-5 wide:sticky wide:top-8">
+          <div className="space-y-7">
+            <div>
+              <h2 className="text-4xl xl:text-5xl font-bold mb-4 text-[#3A2E5C] tracking-tight leading-tight">
+                {t('create.fileMode.title')}
+              </h2>
+              <p className="text-base xl:text-lg text-[#3A2E5C]/70 leading-relaxed">
+                {t('create.fileMode.subtitle')}
+              </p>
+            </div>
+
+            <ul className="space-y-5">
+              <li className="flex gap-3">
+                <ShieldIcon className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-[#3A2E5C] text-base">
+                    {t('create.benefit1Title')}
+                  </p>
+                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
+                    {t('create.benefit1Desc')}
+                  </p>
+                </div>
+              </li>
+              <li className="flex gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.8}
+                  stroke="currentColor"
+                  className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+                  />
+                </svg>
+                <div>
+                  <p className="font-semibold text-[#3A2E5C] text-base">
+                    {t('create.benefit2Title')}
+                  </p>
+                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
+                    {t('create.benefit2Desc')}
+                  </p>
+                </div>
+              </li>
+              <li className="flex gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.8}
+                  stroke="currentColor"
+                  className="h-6 w-6 text-[#4A95FF] shrink-0 mt-0.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 12.75a1.5 1.5 0 0 0 1.5-1.5V7.5a1.5 1.5 0 0 0-3 0v3.75a1.5 1.5 0 0 0 1.5 1.5Z"
+                  />
+                </svg>
+                <div>
+                  <p className="font-semibold text-[#3A2E5C] text-base">
+                    {t('create.benefit3Title')}
+                  </p>
+                  <p className="text-sm text-[#3A2E5C]/70 leading-relaxed mt-1">
+                    {t('create.benefit3Desc')}
+                  </p>
+                </div>
+              </li>
+            </ul>
+
+            <div className="pt-6 border-t border-[#E0E6F0] space-y-1.5">
+              <p className="text-sm font-semibold text-[#3A2E5C]/80">
+                {t('create.trustStrip')}
+              </p>
+              <p className="text-xs text-[#3A2E5C]/60 leading-relaxed">
+                {t('create.trustNote')}
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <div className="wide:col-span-7">
 
       <details
         className="mb-6 sm:mb-8 rounded-2xl p-4 sm:p-5"
@@ -336,6 +432,8 @@ export default function SelfEncryptedFileMode({
             </button>
           </div>
         </form>
+      </div>
+        </div>
       </div>
     </>
   );
