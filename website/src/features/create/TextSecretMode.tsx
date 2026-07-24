@@ -271,15 +271,29 @@ export default function TextSecretMode() {
             </div>
           )}
 
-          {/* Action card */}
+          {/* Action card — v4 product-grade shell.
+              Rounded-[2rem], p-10/p-12, layered soft shadow + a 1px
+              gradient ring (per BRIEF addendum 2026-07-24 11:28). */}
           <div
-            className="rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm"
+            className="relative rounded-[2rem] p-6 sm:p-10 lg:p-12"
             style={{
               background:
-                'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
-              border: '1.5px solid #E0E6F0',
+                'linear-gradient(180deg, #FFFFFF 0%, #FBFBFD 100%)',
+              boxShadow:
+                '0 1px 2px rgba(58, 46, 92, 0.04), 0 8px 30px rgba(58, 46, 92, 0.06), 0 24px 60px -12px rgba(74, 149, 255, 0.08)',
+              border: '1px solid rgba(224, 230, 240, 0.9)',
             }}
           >
+            {/* Subtle inner highlight ring (Stripe-style). */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-[2rem]"
+              style={{
+                boxShadow:
+                  'inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(58, 46, 92, 0.02)',
+              }}
+            />
+            <div className="relative">
             <div className="space-y-7 sm:space-y-9">
               <PlaintextStep
                 value={plaintext}
@@ -346,6 +360,7 @@ export default function TextSecretMode() {
             <div className="mt-5 flex items-start gap-2.5 text-sm text-[#3A2E5C]/65 leading-relaxed">
               <ShieldIcon className="h-5 w-5 shrink-0 text-[#4A95FF] mt-0.5" />
               <p>{t('create.reassurance')}</p>
+            </div>
             </div>
           </div>
         </div>

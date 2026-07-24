@@ -282,15 +282,26 @@ export default function SelfEncryptedFileMode({
         </div>
       )}
 
-      {/* ── Action card — single column ──────────────────────────── */}
+      {/* ── Action card — v4 product-grade shell ────────────────────── */}
       <div
-        className="rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm"
+        className="relative rounded-[2rem] p-6 sm:p-10 lg:p-12"
         style={{
           background:
-            'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
-          border: '1.5px solid #E0E6F0',
+            'linear-gradient(180deg, #FFFFFF 0%, #FBFBFD 100%)',
+          boxShadow:
+            '0 1px 2px rgba(58, 46, 92, 0.04), 0 8px 30px rgba(58, 46, 92, 0.06), 0 24px 60px -12px rgba(74, 149, 255, 0.08)',
+          border: '1px solid rgba(224, 230, 240, 0.9)',
         }}
       >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[2rem]"
+          style={{
+            boxShadow:
+              'inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(58, 46, 92, 0.02)',
+          }}
+        />
+        <div className="relative">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-7 sm:space-y-9">
             {/* Drop zone */}
@@ -432,6 +443,7 @@ export default function SelfEncryptedFileMode({
             </button>
           </div>
         </form>
+        </div>
       </div>
         </div>
       </div>
