@@ -437,5 +437,29 @@
     "keyEmpty": "在下方输入明文后会自动生成密钥…",
     "keyHidden": "你正在使用自定义密钥（在「选项」里关闭「随机生成密钥」并输入）",
     "regenerate": "重新生成"
+  },
+  "nav": {
+    "menuText": "文本",
+    "menuFile": "文件",
+    "slogan": "安全密钥分享，从此简单",
+    "sloganEn": "Secure secret sharing, made simple",
+    "mobileMenuLabel": "菜单",
+    "mobileMenuClose": "关闭菜单",
+    "mobileMenuOpen": "打开菜单"
+  },
+  "hero": {
+    "title": "加密消息",
+    "subtitle": "浏览器本地加密，服务端只看密文",
+    "tagline": "安全密钥分享 · 从此简单"
+  },
+  "disclosure": {
+    "principlesTitle": "原理说明：密钥在哪生成？密文怎么加密？",
+    "principlesIntro": "one-pass 不碰你的明文。以下三件事全部在你的浏览器里发生：",
+    "aboutTitle": "关于 one-pass",
+    "aboutBody": "明文与密钥永远留在你的浏览器，服务端只能看到不可解的密文。",
+    "keyTitle": "密钥在你的浏览器生成",
+    "keyBody": "点击「生成链接」时自动生成一次，不上传服务端。",
+    "cipherTitle": "密文浏览器内生成",
+    "cipherBody": "服务端只能看到加密后的密文，缺密钥解不开。"
   }
 }

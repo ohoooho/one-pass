@@ -13,6 +13,7 @@ import { PlaintextStep } from './PlaintextStep';
 import { KeyStep } from './KeyStep';
 import { EncryptButton } from './EncryptButton';
 import { SecretOptions } from '@shared/components/SecretOptions';
+import Disclosure from '@shared/components/Disclosure';
 
 type KeyMode = 'auto' | 'custom';
 
@@ -23,31 +24,19 @@ type Secret = {
 };
 
 /**
- * 4-step transparent encryption UI for plain text — v5 layout (2026-07-24).
+ * 4-step transparent encryption UI for plain text — v6 layout (2026-07-24).
  *
- * v5 redesign (vs v4):
- *  - Swapped columns at ≥1920px (2K/4K):
- *      v4:  left=marketing copy + benefits + trust strip
- *           right=form card
- *      v5:  left=FORM (primary action — textarea + options + button)
- *           right=transparency UI demo (about + KeyStep + CiphertextBox + trust)
- *  - Killed the giant "加密消息" h1; replaced with a small one-line subtitle
- *    (create.heroSubtitle) in the form card header.
- *  - Button text back to "生成链接" / "Generate link" (create.buttonSubmit) —
- *    Yopass original. The KeyStep + CiphertextBox in the right column are
- *    TRANSPARENCY UI only: the user does not normally interact with them
- *    (default mode = auto). They show the user that encryption is real:
- *      - KeyStep: see the key being generated in their browser.
- *      - CiphertextBox: see the ciphertext being produced live.
- *  - ≥1920px (wide): two-column. Form card on the LEFT (visual anchor).
- *    Right column is a lighter "transparency demo" column.
- *  - <1920px: single column. Form first; the KeyStep + CiphertextBox stay
- *    BELOW the form (inside the same action card) so users can scroll down
- *    and see the demo without losing the form above.
- *  - Result page: v4's "Regenerate key and re-upload" box is BACK in.
- *
- * Each step (PlaintextStep / KeyStep / CiphertextBox) still carries its own
- * step badge (① ② ③) so users have a local anchor.
+ * v6 redesign (vs v5):
+ *  - Two-column grid activates at ≥lg (1024px), not ≥wide (1920px).
+ *      v5:  only 2K/4K got two columns; 1280-1919 still stacked.
+ *      v6:  every "PC" — including iPad landscape — gets the two-column
+ *           layout, matching the user's brief A.
+ *  - In-card Tab removed (now lives as top-bar Nav links).
+ *  - On <lg the right column's transparency content (about + KeyStep +
+ *    CiphertextBox + trust strip) collapses into a single Disclosure
+ *    ("原理说明") so the form stays the visual anchor on mobile.
+ *  - The main "生成链接" button sticks to the bottom on mobile so it's
+ *    always within thumb reach.
  */
 export default function TextSecretMode() {
   const { t } = useTranslation();
@@ -102,7 +91,6 @@ export default function TextSecretMode() {
         if (!cancelled) setCiphertextPreview('');
       }
     }
-    // Small debounce so we don't burn CPU while the user is still typing.
     const timer = setTimeout(liveEncrypt, 150);
     return () => {
       cancelled = true;
@@ -121,9 +109,6 @@ export default function TextSecretMode() {
         setSubmitting(false);
         return;
       }
-      // (keyMode=auto: the live-encrypt effect has already encrypted with the
-      //  same key; we re-encrypt to be safe and so the upload payload matches
-      //  the key we send. For large plaintexts this is the only encryption.)
       const ct = await encryptMessage(plaintext, pw, config.ARGON2);
       const { data, status } = await postSecret(
         {
@@ -175,8 +160,7 @@ export default function TextSecretMode() {
   const submitDisabled =
     !plaintext || (keyMode === 'custom' && !customKey) || submitting;
 
-  // The "form column" body — primary action (used on left of the ≥1920 grid,
-  // and as the only column at <1920).
+  // The "form column" body — primary action.
   const formColumn = (
     <div>
       {errors.secret && (
@@ -198,8 +182,13 @@ export default function TextSecretMode() {
         </div>
       )}
 
-      {/* Small hero subtitle (replaces the giant "加密消息" h1). */}
-      <h2 className="text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
+      {/* Small hero subtitle inside the action card (lg+ the big HeroBand
+          already sits above; this keeps a one-line label for context). */}
+      <h2 className="hidden lg:block text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
+        {t('create.heroSubtitle')}
+      </h2>
+      {/* On <lg the HeroBand is hidden, so we still need a short label. */}
+      <h2 className="lg:hidden text-base font-medium text-[#3A2E5C]/75 mb-4">
         {t('create.heroSubtitle')}
       </h2>
 
@@ -225,17 +214,36 @@ export default function TextSecretMode() {
         />
       </div>
 
-      <EncryptButton
-        loading={submitting}
-        disabled={submitDisabled}
-        onSubmit={() => {
-          if (!plaintext) {
-            setError('secret', { type: 'required', message: t('create.errorNoPlaintext') });
-            return;
-          }
-          onSubmit();
-        }}
-      />
+      {/* On mobile, sticky bottom so the button is always in thumb reach. */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 lg:static lg:z-auto">
+        <div
+          className="lg:bg-transparent"
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow:
+              '0 -8px 24px -8px rgba(58, 46, 92, 0.12), 0 -1px 0 rgba(224, 230, 240, 0.8) inset',
+          }}
+        >
+          <div className="px-4 pt-3 pb-[max(env(safe-area-inset-bottom),1rem)] lg:p-0">
+            <EncryptButton
+              loading={submitting}
+              disabled={submitDisabled}
+              onSubmit={() => {
+                if (!plaintext) {
+                  setError('secret', {
+                    type: 'required',
+                    message: t('create.errorNoPlaintext'),
+                  });
+                  return;
+                }
+                onSubmit();
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="mt-5 flex items-start gap-2.5 text-sm text-[#3A2E5C]/65 leading-relaxed">
         <ShieldIcon className="h-5 w-5 shrink-0 text-[#4A95FF] mt-0.5" />
@@ -246,9 +254,9 @@ export default function TextSecretMode() {
 
   // The "transparency column" body — demo UI the user sees but normally
   // doesn't touch (key + ciphertext blocks). Rendered on the right at
-  // ≥1920px, stacked below the form on narrower viewports.
-  const transparencyColumn = (
-    <aside className="space-y-6">
+  // ≥lg, but collapsed into a Disclosure on <lg.
+  const transparencyContent = (
+    <>
       {/* About one-pass — plain text block. */}
       <div>
         <h3 className="text-base font-semibold text-[#3A2E5C] mb-2 flex items-center gap-2">
@@ -309,20 +317,47 @@ export default function TextSecretMode() {
           {t('create.trustNote')}
         </p>
       </div>
-    </aside>
+    </>
+  );
+
+  // On <lg wrap the transparency content in a single Disclosure so it
+  // collapses behind a tap and the form stays the visual anchor.
+  const transparencyColumn = (
+    <>
+      {/* lg+ : always visible as a right column. */}
+      <aside className="hidden lg:block space-y-6">{transparencyContent}</aside>
+      {/* <lg : collapsed behind the "原理说明" disclosure. */}
+      <div className="lg:hidden mt-6">
+        <Disclosure
+          testId="text-disclosure"
+          summary={
+            <span className="flex items-center gap-2">
+              <ShieldIcon className="h-4 w-4 text-[#4A95FF]" />
+              {t('disclosure.principlesTitle')}
+            </span>
+          }
+          className="border border-[#E0E6F0] bg-white/60"
+        >
+          <p className="text-sm text-[#3A2E5C]/70">
+            {t('disclosure.principlesIntro')}
+          </p>
+          <div className="space-y-4 pt-2">{transparencyContent}</div>
+        </Disclosure>
+      </div>
+    </>
   );
 
   return (
     <>
-      {/* ── v5 responsive grid ────────────────────────────────────
-            <1920px: the grid below doesn't activate, so the children stack
-                      vertically — form first, transparency column below.
-            ≥1920px : 12-col grid → form (col-span-7, left) +
-                      transparency column (col-span-5, right, sticky).
+      {/* ── v6 responsive grid ────────────────────────────────────
+            <lg: the grid doesn't activate, so the children stack
+                 vertically — form first, transparency column below.
+            ≥lg: 12-col grid → form (col-span-7, left) +
+                 transparency column (col-span-5, right, sticky).
        */}
-      <div className="wide:grid wide:grid-cols-12 wide:gap-10 wide:items-start">
+      <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
         {/* ── LEFT — form (primary action) ─────────────────────── */}
-        <div className="wide:col-span-7 wide:order-1">
+        <div className="lg:col-span-7 lg:order-1">
           {/* Action card — v4 product-grade shell. */}
           <div
             className="relative rounded-[2rem] p-6 sm:p-10 lg:p-12"
@@ -334,7 +369,6 @@ export default function TextSecretMode() {
               border: '1px solid rgba(224, 230, 240, 0.9)',
             }}
           >
-            {/* Subtle inner highlight ring (Stripe-style). */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 rounded-[2rem]"
@@ -348,7 +382,7 @@ export default function TextSecretMode() {
         </div>
 
         {/* ── RIGHT — transparency UI demo (lighter visual weight) ── */}
-        <div className="mt-8 wide:col-span-5 wide:order-2 wide:mt-0 wide:sticky wide:top-8">
+        <div className="mt-8 lg:col-span-5 lg:order-2 lg:mt-0 lg:sticky lg:top-8">
           {transparencyColumn}
         </div>
       </div>

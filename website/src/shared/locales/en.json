@@ -437,5 +437,29 @@
     "keyEmpty": "Type plaintext below to generate a key...",
     "keyHidden": "You are using a custom key (toggle off \"Generate decryption key\" in Options)",
     "regenerate": "Regenerate"
+  },
+  "nav": {
+    "menuText": "Text",
+    "menuFile": "File",
+    "slogan": "Secure secret sharing, made simple",
+    "sloganEn": "Secure secret sharing, made simple",
+    "mobileMenuLabel": "Menu",
+    "mobileMenuClose": "Close menu",
+    "mobileMenuOpen": "Open menu"
+  },
+  "hero": {
+    "title": "Encrypt message",
+    "subtitle": "Browser-side encryption, server only sees ciphertext",
+    "tagline": "Secure secret sharing · made simple"
+  },
+  "disclosure": {
+    "principlesTitle": "How it works: where is the key generated? How is it encrypted?",
+    "principlesIntro": "one-pass never touches your plaintext. All three steps happen in your browser:",
+    "aboutTitle": "About one-pass",
+    "aboutBody": "Plaintext and key never leave your browser. The server only sees ciphertext it can't decrypt.",
+    "keyTitle": "Key generated in your browser",
+    "keyBody": "Generated once when you click \"Generate link\". Never sent to server.",
+    "cipherTitle": "Ciphertext created in your browser",
+    "cipherBody": "The server only sees encrypted ciphertext, which can't be decrypted without the key."
   }
 }
