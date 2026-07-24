@@ -73,7 +73,7 @@ test.describe('Force Expiration', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Wait for redirect to result page
     await expect(

@@ -28,7 +28,7 @@ test.describe('Public URL', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -56,7 +56,7 @@ test.describe('Public URL', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),
@@ -83,7 +83,7 @@ test.describe('Public URL', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     await expect(
       page.locator('h2:has-text("Secret stored securely")'),

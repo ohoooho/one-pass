@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfig } from '@shared/hooks/useConfig';
 import { useCopy } from '@shared/hooks/useCopy';
@@ -6,15 +7,30 @@ import {
   CheckIcon,
   CopyIcon,
   InfoIcon,
+  RefreshIcon,
 } from '@shared/components/icons';
+import { encryptMessage } from '@shared/lib/crypto';
+import { postSecret } from '@shared/lib/api';
+import { randomString } from '@shared/lib/random';
 import ReceiptStatus from '@features/display-secret/ReceiptStatus';
 
 interface ResultProps {
   password: string;
   uuid: string;
   prefix: string;
+  customPassword: boolean;
   oneTime: boolean;
   receiptToken?: string;
+  /**
+   * Original plaintext (only used if user clicks "Regenerate").
+   * The result page does NOT persist this for security; the parent must
+   * pass it down if it wants to support regeneration.
+   */
+  plaintext?: string;
+  /** Original options so we can re-POST with the same expiration. */
+  expirationSeconds?: number;
+  /** Original read-receipt flag so we can re-POST with the same flag. */
+  readReceipt?: boolean;
 }
 
 function CopyButton({
@@ -44,19 +60,16 @@ function CopyButton({
   );
 }
 
-/**
- * Result screen shown after a secret has been uploaded.
- *
- * v5 (2026-07-24): removed the "regenerate" UI (and its parent `plaintext`
- * prop) — the key is never shown to the user anymore, so there is nothing
- * to regenerate. Custom-password mode still works the same way.
- */
 function Result({
   password,
   uuid,
   prefix,
+  customPassword,
   oneTime,
   receiptToken,
+  plaintext,
+  expirationSeconds,
+  readReceipt,
 }: ResultProps) {
   const { t } = useTranslation();
   const config = useConfig();
@@ -65,8 +78,49 @@ function Result({
     : window.location.origin;
   const { copy, isCopied } = useCopy();
 
-  const oneClick = `${baseURL}/#/${prefix}/${uuid}/${password}`;
-  const short = `${baseURL}/#/${prefix}/${uuid}`;
+  // Regenerate state
+  const [regenLoading, setRegenLoading] = useState(false);
+  const [regenError, setRegenError] = useState<string | null>(null);
+  const [regenPair, setRegenPair] = useState<{ uuid: string; password: string } | null>(null);
+
+  async function regenerate() {
+    if (!plaintext) {
+      setRegenError(t('result.regenerateNoPlaintext'));
+      return;
+    }
+    setRegenLoading(true);
+    setRegenError(null);
+    try {
+      const newKey = randomString();
+      const newCipher = await encryptMessage(plaintext, newKey, config.ARGON2);
+      const { data, status } = await postSecret(
+        {
+          expiration: expirationSeconds ?? 3600,
+          message: newCipher,
+          one_time: oneTime,
+          require_auth: false,
+          receipt: !!readReceipt,
+        },
+        config.OIDC_ENABLED,
+      );
+      if (status !== 200) {
+        setRegenError(data.message ?? t('result.regenerateFailed'));
+        return;
+      }
+      // Replace current link with the new one
+      setRegenPair({ uuid: data.message, password: newKey });
+    } catch (e) {
+      setRegenError((e as Error).message ?? t('result.regenerateFailed'));
+    } finally {
+      setRegenLoading(false);
+    }
+  }
+
+  // Use regenerated values if present, otherwise the originals.
+  const activeUuid = regenPair?.uuid ?? uuid;
+  const activePassword = regenPair?.password ?? password;
+  const activeOneClick = `${baseURL}/#/${prefix}/${activeUuid}/${activePassword}`;
+  const activeShort = `${baseURL}/#/${prefix}/${activeUuid}`;
 
   return (
     <>
@@ -96,10 +150,24 @@ function Result({
         </div>
       )}
 
+      {regenError && (
+        <div
+          className="mb-4 rounded-2xl px-4 py-3 text-sm font-medium"
+          style={{
+            background: 'rgba(254, 226, 226, 0.6)',
+            border: '1.5px solid #FCA5A5',
+            color: '#B91C1C',
+          }}
+          role="alert"
+        >
+          {regenError}
+        </div>
+      )}
+
       <ResultRow
         title={t('result.rowLabelOneClick')}
         description={t('result.rowOneClickDescription')}
-        value={oneClick}
+        value={activeOneClick}
         copyId="oneClick"
         copy={copy}
         isCopied={isCopied}
@@ -108,7 +176,7 @@ function Result({
       <ResultRow
         title={t('result.rowLabelShortLink')}
         description={t('result.rowShortLinkDescription')}
-        value={short}
+        value={activeShort}
         copyId="shortLink"
         copy={copy}
         isCopied={isCopied}
@@ -117,7 +185,7 @@ function Result({
       <ResultRow
         title={t('result.rowLabelDecryptionKey')}
         description={t('result.rowDecryptionKeyDescription')}
-        value={password}
+        value={activePassword}
         copyId="password"
         copy={copy}
         isCopied={isCopied}
@@ -125,7 +193,48 @@ function Result({
         mono
       />
 
-      {receiptToken && <ReceiptStatus uuid={uuid} token={receiptToken} />}
+      {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}
+
+      {/* Regenerate row — only shown when parent passed plaintext (text mode) */}
+      {plaintext && !customPassword && (
+        <div
+          className="mt-6 rounded-2xl p-5"
+          style={{
+            background: 'linear-gradient(135deg, rgba(165, 216, 255, 0.18) 0%, rgba(184, 230, 193, 0.18) 100%)',
+            border: '1.5px solid rgba(165, 216, 255, 0.4)',
+          }}
+        >
+          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
+            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
+            {t('result.regenerateTitle')}
+          </div>
+          <div className="text-sm text-[#3A2E5C]/70 mb-3">
+            {t('result.regenerateDescription')}
+          </div>
+          <button
+            type="button"
+            onClick={regenerate}
+            disabled={regenLoading}
+            className="btn btn-primary btn-sm rounded-xl disabled:opacity-50"
+            data-testid="regenerate-and-reupload"
+          >
+            {regenLoading ? (
+              <>
+                <span
+                  className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+                <span>{t('result.regenerating')}</span>
+              </>
+            ) : (
+              <>
+                <RefreshIcon className="size-4" />
+                <span>{t('result.regenerateButton')}</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       <div className="flex justify-center mt-8">
         <button

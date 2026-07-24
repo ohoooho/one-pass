@@ -44,7 +44,7 @@ test.describe('Force Onetime Secrets', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Wait for redirect to result page to ensure request completed
     await expect(
@@ -131,7 +131,7 @@ test.describe('Force Onetime Secrets', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Wait for redirect to result page to ensure request completed
     await expect(
@@ -170,7 +170,7 @@ test.describe('Force Onetime Secrets', () => {
       'textarea[placeholder="Enter your secret..."]',
       testSecrets.simple.message,
     );
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="submit-create"]');
 
     // Wait for redirect to result page to ensure request completed
     await expect(
