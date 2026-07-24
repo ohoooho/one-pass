@@ -7,6 +7,7 @@ import { useConfig } from '@shared/hooks/useConfig';
 import { SecretOptions } from '@shared/components/SecretOptions';
 import { ShieldIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
+import Disclosure from '@shared/components/Disclosure';
 
 type FormValues = {
   expiration: string;
@@ -24,10 +25,11 @@ interface SelfEncryptedFileModeProps {
  * File mode — user already encrypted the file themselves (gpg/age/openssl),
  * we just store the ciphertext verbatim and put their key in the URL #.
  *
- * v5 (2026-07-24): removed the giant h1 title. Now a single column with a
- * small subtitle on top. FileMode is much simpler than TextSecretMode (no
- * KeyStep / CiphertextBox needed — user already encrypted), so we don't
- * need a two-column layout here.
+ * v6 (2026-07-24):
+ *  - HeroBand moved up to CreateSecret wrapper (single source for hero band).
+ *  - Help block is now a Disclosure so on mobile it collapses by default.
+ *  - Submit button is sticky-bottom on mobile.
+ *  - Card padding tightened; still no inner Tab (mode swap happens at Nav).
  */
 export default function SelfEncryptedFileMode({
   resetSignal,
@@ -142,24 +144,27 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
-      {/* ── v5 small subtitle (replaces the giant title) ── */}
+      {/* ── v6 small subtitle (replaces the giant title) ── */}
       <h2 className="text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
         {t('create.fileMode.subtitle')}
       </h2>
 
-      {/* Help block (collapsed by default). */}
-      <details
-        className="mb-6 sm:mb-8 rounded-2xl p-4 sm:p-5"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(165, 216, 255, 0.10) 0%, rgba(184, 230, 193, 0.10) 100%)',
-          border: '1.5px solid rgba(165, 216, 255, 0.35)',
-        }}
-      >
-        <summary className="cursor-pointer font-semibold text-sm text-[#3A2E5C]">
-          {t('create.fileMode.helpTitle')}
-        </summary>
-        <div className="mt-3 text-sm space-y-3 text-[#3A2E5C]/80">
+      {/* Help block — Disclosure so mobile collapses by default. */}
+      <div className="mb-6 sm:mb-8">
+        <Disclosure
+          testId="file-help"
+          summary={
+            <span className="flex items-center gap-2">
+              <ShieldIcon className="h-4 w-4 text-[#4A95FF]" />
+              {t('create.fileMode.helpTitle')}
+            </span>
+          }
+          className="border border-[#E0E6F0]"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(165, 216, 255, 0.10) 0%, rgba(184, 230, 193, 0.10) 100%)',
+          }}
+        >
           <p>{t('create.fileMode.helpIntro')}</p>
           <div className="text-sm text-[#3A2E5C]/70">
             {t('create.fileMode.helpCommand')}
@@ -176,8 +181,8 @@ export default function SelfEncryptedFileMode({
               limit: SERVER_SAFE_CIPHERTEXT_BYTES,
             })}
           </p>
-        </div>
-      </details>
+        </Disclosure>
+      </div>
 
       {error && (
         <div
@@ -339,19 +344,33 @@ export default function SelfEncryptedFileMode({
               />
             </div>
 
-            <div className="mt-8">
-              <button
-                type="submit"
-                disabled={!ciphertext || !customKey}
-                className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+            {/* Sticky bottom submit on mobile. */}
+            <div className="fixed bottom-0 left-0 right-0 z-20 lg:static lg:z-auto">
+              <div
+                className="lg:bg-transparent"
                 style={{
-                  background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-                  color: 'white',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  boxShadow:
+                    '0 -8px 24px -8px rgba(58, 46, 92, 0.12), 0 -1px 0 rgba(224, 230, 240, 0.8) inset',
                 }}
-                data-testid="file-submit"
               >
-                {t('create.fileMode.submit')}
-              </button>
+                <div className="px-4 pt-3 pb-[max(env(safe-area-inset-bottom),1rem)] lg:p-0 lg:pt-8">
+                  <button
+                    type="submit"
+                    disabled={!ciphertext || !customKey}
+                    className="w-full h-14 text-base font-semibold rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+                      color: 'white',
+                    }}
+                    data-testid="file-submit"
+                  >
+                    {t('create.fileMode.submit')}
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
 

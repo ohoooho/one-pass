@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FeaturesSection from '@shared/components/FeaturesSection';
 import CreateSecret from '@features/CreateSecret';
 import { Routes, Route, HashRouter } from 'react-router-dom';
@@ -10,7 +10,17 @@ import ReadOnlyLanding from '@features/ReadOnlyLanding';
 import LoginRequired from '@features/LoginRequired';
 import About from '@features/about/About';
 import { useTranslation } from 'react-i18next';
+import MobileMenu from '@shared/components/MobileMenu';
 
+/**
+ * App shell — v6 (2026-07-24).
+ *
+ *  - HashRouter routes: '/' = text mode, '/file' = file mode, '/about' = about.
+ *    TextSecretMode and SelfEncryptedFileMode are decoupled — no in-card Tab
+ *    anymore (the tab was blocking the Nav changes in v4/v5).
+ *  - MobileMenu state lives here so the hamburger (rendered inside Navbar)
+ *    can open it via a window CustomEvent.
+ */
 export default function App() {
   const {
     DISABLE_UPLOAD,
@@ -34,6 +44,38 @@ export default function App() {
     }
     return false;
   });
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Wire up the hamburger trigger inside Navbar to this state.
+  useEffect(() => {
+    function onToggle() {
+      setMobileMenuOpen(o => !o);
+    }
+    window.addEventListener('onepass:mobile-menu:toggle', onToggle);
+    return () => {
+      window.removeEventListener('onepass:mobile-menu:toggle', onToggle);
+    };
+  }, []);
+
+  // Read pathname once for MobileMenu "active" highlights.
+  const [pathname, setPathname] = useState<string>(() => {
+    if (typeof window === 'undefined') return '/';
+    const hash = window.location.hash || '#/';
+    return hash.replace(/^#/, '') || '/';
+  });
+  useEffect(() => {
+    function onHashChange() {
+      const hash = window.location.hash || '#/';
+      setPathname(hash.replace(/^#/, '') || '/');
+    }
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  const onText = pathname === '/' || pathname === '';
+  const onFile = pathname.startsWith('/file');
+  const onAbout = pathname.startsWith('/about');
 
   // Whether creation pages must show the login gate instead of their content.
   const needsLogin = REQUIRE_AUTH && !authLoading && !isAuthenticated;
@@ -100,7 +142,19 @@ export default function App() {
                     ) : needsLogin ? (
                       <LoginRequired />
                     ) : (
-                      <CreateSecret />
+                      <CreateSecret mode="text" />
+                    )
+                  }
+                />
+                <Route
+                  path="/file"
+                  element={
+                    READ_ONLY ? (
+                      <ReadOnlyLanding />
+                    ) : needsLogin ? (
+                      <LoginRequired />
+                    ) : (
+                      <CreateSecret mode="file" />
                     )
                   }
                 />
@@ -112,7 +166,7 @@ export default function App() {
                   <Route path="/upload" element={<LoginRequired />} />
                 ) : (
                   !DISABLE_UPLOAD && (
-                    <Route path="/upload" element={<CreateSecret />} />
+                    <Route path="/upload" element={<CreateSecret mode="text" />} />
                   )
                 )}
                 <Route
@@ -126,6 +180,16 @@ export default function App() {
           <FeaturesSection />
         </main>
       </HashRouter>
+
+      {/* Mobile drawer (outside router — just controlled by App state). */}
+      <MobileMenu
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        textActive={onText}
+        fileActive={onFile}
+        aboutActive={onAbout}
+      />
+
       {/* Footer */}
       <footer className="bg-base-100/50 border-t border-base-300">
         <div className="container mx-auto px-4 py-8">
