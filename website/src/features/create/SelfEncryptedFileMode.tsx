@@ -7,6 +7,7 @@ import { useConfig } from '@shared/hooks/useConfig';
 import { SecretOptions } from '@shared/components/SecretOptions';
 import { ShieldIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
+import HeroBand from '@shared/components/HeroBand';
 import Disclosure from '@shared/components/Disclosure';
 
 type FormValues = {
@@ -144,6 +145,9 @@ export default function SelfEncryptedFileMode({
 
   return (
     <>
+      {/* v7 (2026-07-26) — HeroBand here instead of CreateSecret wrapper,
+          so the result page stops showing it. */}
+      <HeroBand />
       {/* ── v6 small subtitle (replaces the giant title) ── */}
       <h2 className="text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
         {t('create.fileMode.subtitle')}

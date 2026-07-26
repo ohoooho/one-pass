@@ -166,6 +166,7 @@
     "rowLabelDecryptionKey": "Decryption key",
     "rowDecryptionKeyDescription": "Required to decrypt the message with the short link",
     "buttonCreateAnother": "Create another secret",
+    "backButton": "Back to home",
     "receiptTitle": "Read receipt",
     "receiptDescription": "This page updates automatically when the secret is opened. The status is available until the secret expires.",
     "receiptPending": "Not opened yet",

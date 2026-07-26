@@ -9,6 +9,7 @@ import { CiphertextBox } from '@shared/components/CiphertextBox';
 import { randomString } from '@shared/lib/random';
 import { ShieldIcon } from '@shared/components/icons';
 import Result from '@features/display-secret/Result';
+import HeroBand from '@shared/components/HeroBand';
 import { PlaintextStep } from './PlaintextStep';
 import { KeyStep } from './KeyStep';
 import { EncryptButton } from './EncryptButton';
@@ -349,6 +350,7 @@ export default function TextSecretMode() {
 
   return (
     <>
+      <HeroBand />
       {/* ── v6 responsive grid ────────────────────────────────────
             <lg: the grid doesn't activate, so the children stack
                  vertically — form first, transparency column below.
