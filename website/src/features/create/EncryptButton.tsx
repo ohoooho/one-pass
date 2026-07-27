@@ -19,7 +19,7 @@ interface EncryptButtonProps {
 export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProps) {
   const { t } = useTranslation();
   return (
-    <div className="mt-8">
+    <div className="mt-5">
       <button
         type="button"
         onClick={onSubmit}

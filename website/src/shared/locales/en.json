@@ -1,7 +1,6 @@
 {
   "create": {
     "title": "Encrypt message",
-    "inputSecretLabel": "Your Secret",
     "inputSecretPlaceholder": "Enter your secret...",
     "buttonSubmit": "Generate share link",
     "buttonSubmitLoading": "Generating share link…",

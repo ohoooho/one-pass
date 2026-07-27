@@ -42,7 +42,7 @@ export default function Navbar() {
       }}
       data-testid="navbar"
     >
-      <div className="max-w-5xl wide:max-w-none mx-auto px-4 sm:px-6 lg:px-8 wide:px-12">
+      <div className="max-w-[min(72rem,92%)] wide:max-w-[min(96rem,88%)] mx-auto px-4 sm:px-6 lg:px-8 wide:px-12">
         <div className="flex items-center justify-between h-24">
           {/* LEFT — Brand (logo + name + slogan). */}
           <div className="flex items-center min-w-0">
