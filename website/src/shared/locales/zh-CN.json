@@ -176,7 +176,16 @@
     "regenerateButton": "重新生成密钥并重新上传",
     "regenerating": "重新生成中…",
     "regenerateFailed": "重新生成失败，请重试",
-    "regenerateNoPlaintext": "需要明文才能重新加密（自动生成模式）"
+    "regenerateNoPlaintext": "需要明文才能重新加密（自动生成模式）",
+    "imMessageCardTitle": "发给对方（IM 消息）",
+    "imMessageCardDescription": "把整段消息一起发到聊天软件，对方能看到上下文，比裸链接更可信。",
+    "imMessageCopyButton": "复制 IM 消息",
+    "imMessageCopied": "已复制",
+    "imMessageTitle": "🔐 我用 one-pass 给你发了一条加密消息",
+    "imMessageLink": "链接：{{link}}",
+    "imMessageOneTimeWarn": "⚠️ 阅后即焚 — 只能打开一次。不要在公开频道粘贴。",
+    "imMessageOpenHint": "在浏览器中打开链接即可解密。密钥从 URL fragment 读取，HTTP 不会发送密钥。",
+    "imMessageFooter": "—— one-pass · 浏览器端加密，服务端只看密文"
   },
   "secret": {
     "titleFile": "文件已下载",

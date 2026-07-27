@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConfig } from '@shared/hooks/useConfig';
 import { useCopy } from '@shared/hooks/useCopy';
@@ -121,6 +121,30 @@ function Result({
   const activePassword = regenPair?.password ?? password;
   const activeOneClick = `${baseURL}/#/${prefix}/${activeUuid}/${activePassword}`;
   const activeShort = `${baseURL}/#/${prefix}/${activeUuid}`;
+
+  // v8.2 (2026-07-27) — "Copy IM message" template.
+  // IM clients (WeChat / Slack / DingTalk / Telegram) auto-fetch shared
+  // URLs server-side for link previews, which:
+  //   1. burns one-time secrets before the recipient clicks,
+  //   2. renders a bare URL as an unscary/untrustworthy card,
+  //   3. leaks to the recipient that "this is just a link", with no
+  //      context that it's an encrypted secret.
+  // We hand the sender a formatted block they can paste verbatim:
+  // title + link + (oneTime warn | open hint) + footer.
+  const imMessage = useMemo(() => {
+    const lines: string[] = [
+      t('result.imMessageTitle'),
+      '',
+      t('result.imMessageLink', { link: activeOneClick }),
+      '',
+      oneTime
+        ? t('result.imMessageOneTimeWarn')
+        : t('result.imMessageOpenHint'),
+      '',
+      t('result.imMessageFooter'),
+    ];
+    return lines.join('\n');
+  }, [t, activeOneClick, oneTime]);
 
   // v7.1 (2026-07-27) — toolbar removed.
   //   The "← 返回首页" link was redundant (Navbar logo is already `href="#/"`).
@@ -249,6 +273,73 @@ function Result({
         t={t}
         mono
       />
+
+      {/* v8.2 (2026-07-27) — Send via IM card.
+          Recipient-friendly wrapper that fights IM URL unfurl/auto-fetch.
+          Pastes title + link + oneTime/open hint + footer in one block. */}
+      <div
+        className="mt-6 rounded-2xl p-5"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(125, 211, 192, 0.16) 0%, rgba(165, 216, 255, 0.18) 100%)',
+          border: '1.5px solid rgba(125, 211, 192, 0.4)',
+        }}
+      >
+        <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.7}
+            stroke="currentColor"
+            className="h-5 w-5 shrink-0 text-[#0E9F6E]"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.426 5.972 5.972 0 0 1-.426-.474 5.96 5.96 0 0 1-1.213-3.967c.003-.092.012-.184.022-.274a5.97 5.97 0 0 1 .135-1.32A5.96 5.96 0 0 1 5.41 11.07a9.776 9.776 0 0 1 1.092-2.413A9.954 9.954 0 0 1 12 3c4.97 0 9 3.694 9 8.25Z"
+            />
+          </svg>
+          {t('result.imMessageCardTitle')}
+        </div>
+        <div className="text-sm text-[#3A2E5C]/70 mb-4">
+          {t('result.imMessageCardDescription')}
+        </div>
+
+        {/* Preview block — monospace, scrollable if long. Lets the user
+            inspect what they'll be pasting. */}
+        <pre
+          data-testid="im-message-preview"
+          className="text-xs leading-relaxed text-[#3A2E5C]/80 bg-white/80 border border-[#E0E6F0] rounded-xl px-4 py-3 mb-4 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono"
+        >
+          {imMessage}
+        </pre>
+
+        <button
+          type="button"
+          onClick={() => copy(imMessage, 'imMessage')}
+          className="w-full h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2"
+          style={{
+            background:
+              'linear-gradient(135deg, #0E9F6E 0%, #2DD4BF 100%)',
+            color: 'white',
+          }}
+          data-testid="copy-im-message"
+        >
+          {isCopied('imMessage') ? (
+            <>
+              <CheckIcon className="h-5 w-5 shrink-0" />
+              <span>{t('result.imMessageCopied')}</span>
+            </>
+          ) : (
+            <>
+              <CopyIcon className="h-5 w-5 shrink-0" />
+              <span>{t('result.imMessageCopyButton')}</span>
+            </>
+          )}
+        </button>
+      </div>
 
       {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}
 
