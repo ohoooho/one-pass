@@ -28,6 +28,7 @@ Web UI simplification + IM-sharing adaptations. **Milestone tag.**
 - **Sticky bottom bar invisible white frame at desktop** (v8.1b). The mobile-only sticky button wrapper had `inline style background` overriding the lg `bg-transparent` className (inline specificity > className). Moved all styles into Tailwind classes so `lg:bg-transparent` actually applies.
 - **"再发一个" did nothing on Create-flow Result** (v8.3b). See Added above.
 - **Disabled-state button subtext "请先在上方输入明文" dropped** (v8.1a). The disabled button + textarea placeholder already say it; the extra line was visual noise.
+- **English nav brand still said "Yopass"** (v8.7). The `header.appName` fallback in `en.json` was never updated when the brand became one-pass (zh-CN was already 'one-pass'). English visitors saw "[Yopass Secure secret sharing, made simple](...)" next to the logo.
 
 ### Removed
 - **`buttonDisabledHint` i18n key** (en + zh-CN).
@@ -39,3 +40,15 @@ Web UI simplification + IM-sharing adaptations. **Milestone tag.**
 _(tracked in commit history until the next milestone)_
 
 [v8.0.0]: https://git.dbhys.com/ohoooho/one-pass/compare/51ecc32...v8.0.0
+
+## [v8.0.1] — 2026-07-27
+
+Hotfix on top of the v8 milestone tag.
+
+### Changed
+- **oneTime checkbox default OFF** (v8.6). When the inline IM warning was rendered under the checked box, the Submit button dropped below the fold on default viewport. The warning still appears at decision time when the user opts in — only the default flipped.
+
+### Fixed
+- **English nav brand** (v8.7). See Fixed section in v8.0.0.
+
+[v8.0.1]: https://git.dbhys.com/ohoooho/one-pass/compare/v8.0.0...v8.0.1
