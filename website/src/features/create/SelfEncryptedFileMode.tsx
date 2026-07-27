@@ -47,7 +47,9 @@ export default function SelfEncryptedFileMode({
   const [error, setError] = useState<string | null>(null);
   const [readReceipt, setReadReceipt] = useState(false);
   const [receiptToken, setReceiptToken] = useState<string | undefined>();
-  const [oneTime, setOneTime] = useState(true);
+  // v8.6 (2026-07-27) — oneTime default OFF (see TextSecretMode for
+  // rationale: warning card crowds out Submit on default render).
+  const [oneTime, setOneTime] = useState(false);
   const [result, setResult] = useState<{
     password: string;
     uuid: string;
@@ -86,7 +88,7 @@ export default function SelfEncryptedFileMode({
   const { register, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {
       expiration: String(config?.DEFAULT_EXPIRY ?? 3600),
-      oneTime: true,
+      oneTime: false,  // v8.6 — see oneTime default in TextSecretMode
     },
   });
 

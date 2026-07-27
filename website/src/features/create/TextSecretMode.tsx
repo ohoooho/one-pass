@@ -67,7 +67,12 @@ export default function TextSecretMode() {
 
   const [requireAuth, setRequireAuth] = useState(false);
   const [readReceipt, setReadReceipt] = useState(false);
-  const [oneTime, setOneTime] = useState(true);
+  // v8.6 (2026-07-27) — oneTime default OFF. When checked, SecretOptions
+  // renders an inline red warning (IM auto-fetch) which adds enough
+  // vertical space to push the Submit button below the fold. Users who
+  // want burn-after-reading can still opt in; the warning still
+  // appears at decision time when they check it.
+  const [oneTime, setOneTime] = useState(false);
 
   const [result, setResult] = useState<{
     password: string;

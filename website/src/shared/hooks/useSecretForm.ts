@@ -23,7 +23,9 @@ export interface SecretFormState {
 }
 
 export function useSecretForm(): SecretFormState {
-  const [oneTime, setOneTime] = useState(true);
+  // v8.6 (2026-07-27) — oneTime default OFF. Inline IM warning at
+  // default-on pushes Submit below the fold.
+  const [oneTime, setOneTime] = useState(false);
   const [generateKey, setGenerateKey] = useState(true);
   const [customPassword, setCustomPassword] = useState('');
   const [result, setResult] = useState({

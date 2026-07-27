@@ -40,7 +40,7 @@ export default function StreamingUpload() {
   const { register, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {
       expiration: String(config?.DEFAULT_EXPIRY ?? 3600),
-      oneTime: true,
+      oneTime: false,  // v8.6 — see oneTime default in TextSecretMode
     },
   });
 
