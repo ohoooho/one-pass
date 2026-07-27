@@ -193,58 +193,6 @@ function Result({
         </div>
       )}
 
-      {/* v8 (2026-07-27) — Regenerate row moved to the TOP.
-           Previously it sat at the bottom, after all the ResultRows, so users
-           who wanted to regenerate missed it (had to scroll). High-frequency
-           operation → put it where the eye lands first; button now uses the
-           primary gradient style and full width, matching the Submit button
-           weight on the create page. */}
-      {plaintext && !customPassword && (
-        <div
-          className="mb-6 rounded-2xl p-5"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(165, 216, 255, 0.20) 0%, rgba(184, 230, 193, 0.20) 100%)',
-            border: '1.5px solid rgba(74, 149, 255, 0.28)',
-          }}
-        >
-          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
-            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
-            {t('result.regenerateTitle')}
-          </div>
-          <div className="text-sm text-[#3A2E5C]/70 mb-4">
-            {t('result.regenerateDescription')}
-          </div>
-          <button
-            type="button"
-            onClick={regenerate}
-            disabled={regenLoading}
-            className="w-full h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
-            style={{
-              background:
-                'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-              color: 'white',
-            }}
-            data-testid="regenerate-and-reupload"
-          >
-            {regenLoading ? (
-              <>
-                <span
-                  className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                  aria-hidden="true"
-                />
-                <span>{t('result.regenerating')}</span>
-              </>
-            ) : (
-              <>
-                <RefreshIcon className="h-5 w-5 shrink-0" />
-                <span>{t('result.regenerateButton')}</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
-
       <ResultRow
         title={t('result.rowLabelOneClick')}
         description={t('result.rowOneClickDescription')}
@@ -340,6 +288,77 @@ function Result({
           )}
         </button>
       </div>
+
+      {/* v8.3 (2026-07-27) — Regenerate moved to the BOTTOM, below IM
+           message card and ReceiptStatus. Rationale:
+             1. After sharing, the next thing a user does is *copy the
+                link* / *paste to IM* / *check the receipt* — not
+                regenerate. Regenerate is a low-frequency escape hatch.
+             2. v8 put it at the top in a heavy blue-gradient card and it
+                was being mistaken for "再发一个" (Navbar CTA). Different
+                semantics, different visual weight.
+             3. Style: outline card (no fill, no shadow) with a thin
+                border so it reads as a secondary action, not the main
+                CTA of the page.
+           The "再发一个" Navbar CTA is the primary way to start fresh;
+           this card is the niche "I want to keep the same plaintext but
+           swap the key" option. */}
+      {plaintext && !customPassword && (
+        <details
+          className="mt-6 rounded-2xl border border-[#E0E6F0] bg-white/60 group"
+          data-testid="regenerate-disclosure"
+        >
+          <summary className="cursor-pointer list-none px-5 py-4 flex items-center gap-2.5 text-sm font-medium text-[#3A2E5C]/75 hover:text-[#3A2E5C] transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.7}
+              stroke="currentColor"
+              className="h-5 w-5 shrink-0 text-[#3A2E5C]/55 group-open:rotate-90 transition-transform"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+              />
+            </svg>
+            <RefreshIcon className="h-4 w-4 shrink-0 text-[#3A2E5C]/55" />
+            <span>{t('result.regenerateTitle')}</span>
+            <span className="ml-auto text-xs text-[#3A2E5C]/45 hidden sm:inline">
+              {t('result.regenerateDisclosureHint')}
+            </span>
+          </summary>
+          <div className="px-5 pb-5 pt-1">
+            <div className="text-sm text-[#3A2E5C]/70 mb-4">
+              {t('result.regenerateDescription')}
+            </div>
+            <button
+              type="button"
+              onClick={regenerate}
+              disabled={regenLoading}
+              className="w-full h-11 text-sm font-semibold rounded-xl transition-all duration-200 border border-[#4A95FF]/40 text-[#4A95FF] bg-white hover:bg-[#4A95FF]/5 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+              data-testid="regenerate-and-reupload"
+            >
+              {regenLoading ? (
+                <>
+                  <span
+                    className="inline-block w-4 h-4 border-2 border-[#4A95FF]/30 border-t-[#4A95FF] rounded-full animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span>{t('result.regenerating')}</span>
+                </>
+              ) : (
+                <>
+                  <RefreshIcon className="h-4 w-4 shrink-0" />
+                  <span>{t('result.regenerateButton')}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </details>
+      )}
 
       {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}
 

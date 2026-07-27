@@ -177,6 +177,7 @@
     "regenerating": "Regenerating…",
     "regenerateFailed": "Regeneration failed, please retry",
     "regenerateNoPlaintext": "Plaintext needed to re-encrypt (auto-generate mode)",
+    "regenerateDisclosureHint": "Advanced · same plaintext, new key",
     "imMessageCardTitle": "Send via IM",
     "imMessageCardDescription": "Copy this whole message into chat — the recipient sees context, not a bare scary link.",
     "imMessageCopyButton": "Copy IM message",

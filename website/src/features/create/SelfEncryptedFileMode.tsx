@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { postSecret } from '@shared/lib/api';
@@ -52,6 +52,17 @@ export default function SelfEncryptedFileMode({
     password: string;
     uuid: string;
   } | null>(null);
+
+  // v8.3 (2026-07-27) — Tell Navbar when we're showing the Result view
+  // so the '再发一个' CTA appears (URL is still '/file', path detection
+  // misses us).
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('onepass:result:show', {
+        detail: { show: !!result?.uuid },
+      }),
+    );
+  }, [result?.uuid]);
 
   const { register, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {

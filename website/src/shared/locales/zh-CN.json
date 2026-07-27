@@ -177,6 +177,7 @@
     "regenerating": "重新生成中…",
     "regenerateFailed": "重新生成失败，请重试",
     "regenerateNoPlaintext": "需要明文才能重新加密（自动生成模式）",
+    "regenerateDisclosureHint": "高级选项 · 同一份明文换密钥",
     "imMessageCardTitle": "发给对方（IM 消息）",
     "imMessageCardDescription": "把整段消息一起发到聊天软件，对方能看到上下文，比裸链接更可信。",
     "imMessageCopyButton": "复制 IM 消息",
