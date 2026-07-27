@@ -6,7 +6,6 @@
     "step1Title": "输入明文",
     "step2Title": "在你浏览器生成的密钥",
     "step3Title": "在你浏览器加密的密文",
-    "inputSecretLabel": "你的明文",
     "inputSecretPlaceholder": "把要分享的密钥/密码/凭证粘贴到这里…",
     "buttonSubmit": "生成分享链接",
     "buttonSubmitLoading": "正在生成分享链接…",

@@ -104,7 +104,7 @@ export default function App() {
         <main
           id="main-content"
           tabIndex={-1}
-          className="w-full max-w-5xl wide:max-w-none mx-auto mb-auto px-4 sm:px-6 lg:px-8 wide:px-12 py-10 sm:py-14 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="w-full max-w-[min(72rem,92%)] wide:max-w-[min(96rem,88%)] mx-auto mb-auto px-4 sm:px-6 lg:px-8 wide:px-12 py-6 sm:py-8 lg:py-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {/* Outer shell:
                 - <lg: rounded card with subtle border/shadow (compact layout needs the frame).

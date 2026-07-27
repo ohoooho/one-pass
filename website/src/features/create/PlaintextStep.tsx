@@ -37,11 +37,8 @@ export function PlaintextStep({
           {t('create.step1Title')}
         </h3>
       </div>
-      <label className="label" htmlFor="secret">
-        <span className="label-text text-sm text-[#3A2E5C]/70">
-          {t('create.inputSecretLabel')}
-        </span>
-      </label>
+      {/* v8 (2026-07-27): <label>+<span> removed — it just repeated the h3
+          "输入明文" above. Placeholder now carries the role. */}
       <textarea
         id="secret"
         {...registration}
@@ -50,9 +47,9 @@ export function PlaintextStep({
           registration?.onChange(e);
           onChange(e.target.value);
         }}
-        className="textarea w-full min-h-[120px] text-base p-4 resize-y rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] bg-white text-[#3A2E5C] placeholder:text-[#3A2E5C]/30"
+        className="textarea w-full min-h-[100px] text-base p-4 resize-y rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#4A95FF]/30 border-2 border-[#E0E6F0] focus:border-[#4A95FF] bg-white text-[#3A2E5C] placeholder:text-[#3A2E5C]/30"
         placeholder={t('create.inputSecretPlaceholder')}
-        rows={4}
+        rows={3}
         data-testid="plaintext-input"
       />
       {error && (

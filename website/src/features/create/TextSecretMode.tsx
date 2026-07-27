@@ -186,11 +186,11 @@ export default function TextSecretMode() {
       {/* Compact info hint lives in the HeroBand above the card at ≥lg.
           At <lg the HeroBand is hidden, so the action card still needs a
           short heading for context. */}
-      <h2 className="lg:hidden text-base font-medium text-[#3A2E5C]/75 mb-4">
+      <h2 className="lg:hidden text-base font-medium text-[#3A2E5C]/75 mb-3">
         {t('create.heroSubtitle')}
       </h2>
 
-      <div className="space-y-7 sm:space-y-9">
+      <div className="space-y-5 sm:space-y-7">
         <PlaintextStep
           value={plaintext}
           onChange={(v) => {
@@ -253,19 +253,13 @@ export default function TextSecretMode() {
   // The "transparency column" body — demo UI the user sees but normally
   // doesn't touch (key + ciphertext blocks). Rendered on the right at
   // ≥lg, but collapsed into a Disclosure on <lg.
+  //
+  // v8 (2026-07-27) — About one-pass block removed. The HeroBand above
+  // the card already carries the same "明文 / 密钥 从不离开浏览器"
+  // message in compact form, so a second copy (heading + body) in the
+  // right column was redundant noise. TrustStrip merged into one line.
   const transparencyContent = (
     <>
-      {/* About one-pass — plain text block. */}
-      <div>
-        <h3 className="text-base font-semibold text-[#3A2E5C] mb-2 flex items-center gap-2">
-          <ShieldIcon className="h-5 w-5 text-[#4A95FF] shrink-0" />
-          {t('create.sidebar.aboutTitle')}
-        </h3>
-        <p className="text-sm text-[#3A2E5C]/70 leading-relaxed">
-          {t('create.sidebar.aboutBody')}
-        </p>
-      </div>
-
       {/* Step 2 — KeyStep (radio + key string + regenerate). */}
       <div
         className="rounded-2xl p-4 sm:p-5"
@@ -306,15 +300,13 @@ export default function TextSecretMode() {
         />
       </section>
 
-      {/* Trust strip — kept from v4. */}
-      <div className="pt-4 border-t border-[#E0E6F0] space-y-1.5">
-        <p className="text-sm font-semibold text-[#3A2E5C]/80">
-          {t('create.trustStrip')}
-        </p>
-        <p className="text-xs text-[#3A2E5C]/60 leading-relaxed">
-          {t('create.trustNote')}
-        </p>
-      </div>
+      {/* Trust line — v8. Previously a 2-line block (title + body).
+          Consolidated into a single compact line; rest of the brand info
+          (GitHub / Apache-2.0 / fork) lives in the footer below the
+          footer slot in App.tsx. */}
+      <p className="pt-3 mt-2 border-t border-[#E0E6F0] text-xs text-[#3A2E5C]/55 leading-relaxed">
+        {t('create.trustStrip')} · {t('create.trustNote')}
+      </p>
     </>
   );
 
@@ -359,7 +351,7 @@ export default function TextSecretMode() {
         <div className="lg:col-span-7 lg:order-1">
           {/* Action card — v4 product-grade shell. */}
           <div
-            className="relative rounded-[2rem] p-6 sm:p-10 lg:p-12"
+            className="relative rounded-[2rem] p-5 sm:p-8 lg:p-10"
             style={{
               background:
                 'linear-gradient(180deg, #FFFFFF 0%, #FBFBFD 100%)',
