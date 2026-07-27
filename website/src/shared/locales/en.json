@@ -176,7 +176,16 @@
     "regenerateButton": "Regenerate key and re-upload",
     "regenerating": "Regenerating…",
     "regenerateFailed": "Regeneration failed, please retry",
-    "regenerateNoPlaintext": "Plaintext needed to re-encrypt (auto-generate mode)"
+    "regenerateNoPlaintext": "Plaintext needed to re-encrypt (auto-generate mode)",
+    "imMessageCardTitle": "Send via IM",
+    "imMessageCardDescription": "Copy this whole message into chat — the recipient sees context, not a bare scary link.",
+    "imMessageCopyButton": "Copy IM message",
+    "imMessageCopied": "Copied",
+    "imMessageTitle": "🔐 I'm sending you an encrypted message via one-pass",
+    "imMessageLink": "Link: {{link}}",
+    "imMessageOneTimeWarn": "⚠️ One-time download — opens only once. Don't paste in public channels.",
+    "imMessageOpenHint": "Open the link in any browser to decrypt. The key is in the URL fragment — HTTP never sends it.",
+    "imMessageFooter": "— one-pass · Browser-side encryption, server only sees ciphertext"
   },
   "secret": {
     "titleFile": "File Downloaded",
