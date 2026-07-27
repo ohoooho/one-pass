@@ -1,46 +1,87 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShieldIcon } from '@shared/components/icons';
 
 /**
- * one-pass HeroBand — v6 (2026-07-24).
+ * one-pass CompactInfo — v8 (2026-07-27).
  *
- * Sits between the Navbar and the main action card. The brief (E) wanted
- * the container style to feel "real" instead of "unchanged from v4", so we
- * introduce this breathing band that frames each creation page.
+ * Replaces v6's big "HeroBand" (icon + text-3xl title + subtitle + tagline,
+ * ~150-200px tall). Users said it ate too much vertical space and pushed the
+ * action card below the fold. Now it's a single-row info hint card:
  *
- *  - title (text-3xl) + subtitle (one line) + tagline (small caps),
- *  - hidden <lg so it never competes with the form on tablet/mobile,
- *  - centered text, generous vertical padding (~150-200px total).
+ *   ┌─────────────────────────────────────────────────────────┐
+ *   │ 🛡  加密消息 · 浏览器本地加密，服务端只看密文      ✕     │
+ *   └─────────────────────────────────────────────────────────┘
  *
- * Three copy slots are i18n-driven so the band works in zh-CN / en.
+ *   · height ~60-72px (vs ~180px before)
+ *   · desktop only (mobile never had it — the in-card title covers that)
+ *   · dismissible (× button); once dismissed it stays gone for the session
+ *     via sessionStorage so repeat visitors see the action card immediately
  */
 export default function HeroBand() {
   const { t } = useTranslation();
+  const storageKey = 'onepass:hero-band-dismissed';
+  const [dismissed, setDismissed] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.sessionStorage?.getItem(storageKey) === '1',
+  );
+
+  if (dismissed) return null;
+
   return (
     <section
       data-testid="hero-band"
-      className="hidden lg:block text-center pt-2 pb-10 lg:pt-4 lg:pb-14"
+      className="hidden lg:flex items-center gap-3 mt-1 mb-5 px-4 py-3 rounded-2xl text-sm"
+      style={{
+        background:
+          'linear-gradient(180deg, rgba(74, 149, 255, 0.06) 0%, rgba(91, 181, 255, 0.04) 100%)',
+        border: '1px solid rgba(74, 149, 255, 0.18)',
+      }}
+      aria-label={t('hero.title')}
     >
-      <div
-        className="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-4"
+      <span
+        className="inline-flex items-center justify-center w-8 h-8 rounded-xl shrink-0"
         style={{
           background:
-            'linear-gradient(135deg, rgba(74, 149, 255, 0.12) 0%, rgba(91, 181, 255, 0.18) 100%)',
-          border: '1.5px solid rgba(74, 149, 255, 0.25)',
+            'linear-gradient(135deg, rgba(74, 149, 255, 0.14) 0%, rgba(91, 181, 255, 0.20) 100%)',
+          border: '1px solid rgba(74, 149, 255, 0.28)',
         }}
         aria-hidden="true"
       >
-        <ShieldIcon className="h-6 w-6 text-[#4A95FF]" />
+        <ShieldIcon className="h-4 w-4 text-[#4A95FF]" />
+      </span>
+      <div className="flex-1 min-w-0 text-[#3A2E5C]/80 leading-snug">
+        <span className="font-semibold text-[#3A2E5C]">
+          {t('hero.title')}
+        </span>
+        <span className="mx-2 text-[#3A2E5C]/30">·</span>
+        <span>{t('hero.subtitle')}</span>
       </div>
-      <h1 className="text-3xl sm:text-[2rem] font-bold tracking-tight text-[#3A2E5C] m-0">
-        {t('hero.title')}
-      </h1>
-      <p className="mt-3 text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed">
-        {t('hero.subtitle')}
-      </p>
-      <p className="mt-2 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-[#4A95FF]/80">
-        {t('hero.tagline')}
-      </p>
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            window.sessionStorage?.setItem(storageKey, '1');
+          } catch {
+            /* sessionStorage may be blocked — ignore */
+          }
+          setDismissed(true);
+        }}
+        className="shrink-0 w-7 h-7 inline-flex items-center justify-center rounded-lg text-[#3A2E5C]/40 hover:text-[#3A2E5C] hover:bg-white/60 transition-colors"
+        aria-label={t('common.dismiss')}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-4 h-4"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
     </section>
   );
 }

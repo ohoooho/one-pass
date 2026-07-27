@@ -183,12 +183,9 @@ export default function TextSecretMode() {
         </div>
       )}
 
-      {/* Small hero subtitle inside the action card (lg+ the big HeroBand
-          already sits above; this keeps a one-line label for context). */}
-      <h2 className="hidden lg:block text-base sm:text-lg text-[#3A2E5C]/70 leading-relaxed mb-6 sm:mb-8 font-normal">
-        {t('create.heroSubtitle')}
-      </h2>
-      {/* On <lg the HeroBand is hidden, so we still need a short label. */}
+      {/* Compact info hint lives in the HeroBand above the card at ≥lg.
+          At <lg the HeroBand is hidden, so the action card still needs a
+          short heading for context. */}
       <h2 className="lg:hidden text-base font-medium text-[#3A2E5C]/75 mb-4">
         {t('create.heroSubtitle')}
       </h2>
