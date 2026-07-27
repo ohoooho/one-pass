@@ -238,7 +238,7 @@
     "buttonHome": "Home",
     "buttonUpload": "Upload",
     "buttonText": "Text",
-    "appName": "Yopass",
+    "appName": "one-pass",
     "buttonRequests": "Requests",
     "requestsWithCount": "{{count}} secrets waiting to be collected",
     "buttonReceipts": "Receipts",
