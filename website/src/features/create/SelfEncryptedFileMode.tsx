@@ -64,6 +64,25 @@ export default function SelfEncryptedFileMode({
     );
   }, [result?.uuid]);
 
+  // v8.3b (2026-07-27) — Navbar '再发一个' dispatches this when clicked.
+  // A bare <a href="#/"> can't reset our state because the URL is
+  // already 'file', so the browser doesn't reload or fire any event.
+  // Listen and clear our own result so the create form comes back.
+  // Also clear ciphertext/filename so the user isn't misled by the
+  // old file name on the form.
+  useEffect(() => {
+    function onCreateAnother() {
+      setResult(null);
+      setReceiptToken(undefined);
+      setError(null);
+      setCiphertext('');
+      setFilename(null);
+    }
+    window.addEventListener('onepass:create-another', onCreateAnother);
+    return () =>
+      window.removeEventListener('onepass:create-another', onCreateAnother);
+  }, []);
+
   const { register, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {
       expiration: String(config?.DEFAULT_EXPIRY ?? 3600),
