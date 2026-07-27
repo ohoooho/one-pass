@@ -169,6 +169,58 @@ function Result({
         </div>
       )}
 
+      {/* v8 (2026-07-27) — Regenerate row moved to the TOP.
+           Previously it sat at the bottom, after all the ResultRows, so users
+           who wanted to regenerate missed it (had to scroll). High-frequency
+           operation → put it where the eye lands first; button now uses the
+           primary gradient style and full width, matching the Submit button
+           weight on the create page. */}
+      {plaintext && !customPassword && (
+        <div
+          className="mb-6 rounded-2xl p-5"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(165, 216, 255, 0.20) 0%, rgba(184, 230, 193, 0.20) 100%)',
+            border: '1.5px solid rgba(74, 149, 255, 0.28)',
+          }}
+        >
+          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
+            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
+            {t('result.regenerateTitle')}
+          </div>
+          <div className="text-sm text-[#3A2E5C]/70 mb-4">
+            {t('result.regenerateDescription')}
+          </div>
+          <button
+            type="button"
+            onClick={regenerate}
+            disabled={regenLoading}
+            className="w-full h-12 text-base font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+            style={{
+              background:
+                'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+              color: 'white',
+            }}
+            data-testid="regenerate-and-reupload"
+          >
+            {regenLoading ? (
+              <>
+                <span
+                  className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+                <span>{t('result.regenerating')}</span>
+              </>
+            ) : (
+              <>
+                <RefreshIcon className="h-5 w-5 shrink-0" />
+                <span>{t('result.regenerateButton')}</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
       <ResultRow
         title={t('result.rowLabelOneClick')}
         description={t('result.rowOneClickDescription')}
@@ -199,47 +251,6 @@ function Result({
       />
 
       {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}
-
-      {/* Regenerate row — only shown when parent passed plaintext (text mode) */}
-      {plaintext && !customPassword && (
-        <div
-          className="mt-6 rounded-2xl p-5"
-          style={{
-            background: 'linear-gradient(135deg, rgba(165, 216, 255, 0.18) 0%, rgba(184, 230, 193, 0.18) 100%)',
-            border: '1.5px solid rgba(165, 216, 255, 0.4)',
-          }}
-        >
-          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
-            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
-            {t('result.regenerateTitle')}
-          </div>
-          <div className="text-sm text-[#3A2E5C]/70 mb-3">
-            {t('result.regenerateDescription')}
-          </div>
-          <button
-            type="button"
-            onClick={regenerate}
-            disabled={regenLoading}
-            className="btn btn-primary btn-sm rounded-xl disabled:opacity-50"
-            data-testid="regenerate-and-reupload"
-          >
-            {regenLoading ? (
-              <>
-                <span
-                  className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                  aria-hidden="true"
-                />
-                <span>{t('result.regenerating')}</span>
-              </>
-            ) : (
-              <>
-                <RefreshIcon className="size-4" />
-                <span>{t('result.regenerateButton')}</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
 
     </>
   );
