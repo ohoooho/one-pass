@@ -177,7 +177,6 @@
     "regenerating": "重新生成中…",
     "regenerateFailed": "重新生成失败，请重试",
     "regenerateNoPlaintext": "需要明文才能重新加密（自动生成模式）",
-    "regenerateDisclosureHint": "高级选项 · 同一份明文换密钥",
     "imMessageCardTitle": "发给对方（IM 消息）",
     "imMessageCardDescription": "为避免 IM 预检消耗阅后即焚，链接中已去掉 https:// 前缀 — 对方需手动拼上协议或粘到浏览器地址栏。",
     "imMessageCopyButton": "复制 IM 消息",
