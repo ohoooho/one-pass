@@ -212,17 +212,14 @@ export default function TextSecretMode() {
         />
       </div>
 
-      {/* On mobile, sticky bottom so the button is always in thumb reach. */}
+      {/* On mobile, sticky bottom so the button is always in thumb reach.
+          v8.1b (2026-07-27): inline `background` removed — it always beat
+          `lg:bg-transparent` (inline > className specificity), leaving the
+          sticky bar white at lg. Now the styles live in Tailwind classes
+          so the lg override actually takes effect. */}
       <div className="fixed bottom-0 left-0 right-0 z-20 lg:static lg:z-auto">
         <div
-          className="lg:bg-transparent"
-          style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            boxShadow:
-              '0 -8px 24px -8px rgba(58, 46, 92, 0.12), 0 -1px 0 rgba(224, 230, 240, 0.8) inset',
-          }}
+          className="bg-white/95 backdrop-blur-xl lg:bg-transparent shadow-[0_-8px_24px_-8px_rgba(58,46,92,0.12)] lg:shadow-none"
         >
           <div className="px-4 pt-3 pb-[max(env(safe-area-inset-bottom),1rem)] lg:p-0">
             <EncryptButton
