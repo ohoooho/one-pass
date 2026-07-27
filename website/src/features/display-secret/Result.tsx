@@ -318,64 +318,49 @@ function Result({
              3. Style: outline card (no fill, no shadow) with a thin
                 border so it reads as a secondary action, not the main
                 CTA of the page.
+           v8.3a (2026-07-27) — Un-collapsed. Keys are webcrypto random
+           (22-char base64) so users *don't* need to re-roll for
+           randomness. The <details> wrapper hid the feature for
+           everyone who didn't think to expand it. Keep it always
+           visible, just styled as a secondary action.
            The "再发一个" Navbar CTA is the primary way to start fresh;
            this card is the niche "I want to keep the same plaintext but
            swap the key" option. */}
       {plaintext && !customPassword && (
-        <details
-          className="mt-6 rounded-2xl border border-[#E0E6F0] bg-white/60 group"
-          data-testid="regenerate-disclosure"
+        <div
+          className="mt-6 rounded-2xl border border-[#E0E6F0] bg-white/60 p-5"
+          data-testid="regenerate-card"
         >
-          <summary className="cursor-pointer list-none px-5 py-4 flex items-center gap-2.5 text-sm font-medium text-[#3A2E5C]/75 hover:text-[#3A2E5C] transition-colors">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.7}
-              stroke="currentColor"
-              className="h-5 w-5 shrink-0 text-[#3A2E5C]/55 group-open:rotate-90 transition-transform"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
-              />
-            </svg>
-            <RefreshIcon className="h-4 w-4 shrink-0 text-[#3A2E5C]/55" />
-            <span>{t('result.regenerateTitle')}</span>
-            <span className="ml-auto text-xs text-[#3A2E5C]/45 hidden sm:inline">
-              {t('result.regenerateDisclosureHint')}
-            </span>
-          </summary>
-          <div className="px-5 pb-5 pt-1">
-            <div className="text-sm text-[#3A2E5C]/70 mb-4">
-              {t('result.regenerateDescription')}
-            </div>
-            <button
-              type="button"
-              onClick={regenerate}
-              disabled={regenLoading}
-              className="w-full h-11 text-sm font-semibold rounded-xl transition-all duration-200 border border-[#4A95FF]/40 text-[#4A95FF] bg-white hover:bg-[#4A95FF]/5 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
-              data-testid="regenerate-and-reupload"
-            >
-              {regenLoading ? (
-                <>
-                  <span
-                    className="inline-block w-4 h-4 border-2 border-[#4A95FF]/30 border-t-[#4A95FF] rounded-full animate-spin"
-                    aria-hidden="true"
-                  />
-                  <span>{t('result.regenerating')}</span>
-                </>
-              ) : (
-                <>
-                  <RefreshIcon className="h-4 w-4 shrink-0" />
-                  <span>{t('result.regenerateButton')}</span>
-                </>
-              )}
-            </button>
+          <div className="font-semibold text-base mb-1 text-[#3A2E5C] flex items-center gap-2">
+            <RefreshIcon className="h-5 w-5 shrink-0 text-[#4A95FF]" />
+            {t('result.regenerateTitle')}
           </div>
-        </details>
+          <div className="text-sm text-[#3A2E5C]/70 mb-4">
+            {t('result.regenerateDescription')}
+          </div>
+          <button
+            type="button"
+            onClick={regenerate}
+            disabled={regenLoading}
+            className="w-full h-11 text-sm font-semibold rounded-xl transition-all duration-200 border border-[#4A95FF]/40 text-[#4A95FF] bg-white hover:bg-[#4A95FF]/5 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+            data-testid="regenerate-and-reupload"
+          >
+            {regenLoading ? (
+              <>
+                <span
+                  className="inline-block w-4 h-4 border-2 border-[#4A95FF]/30 border-t-[#4A95FF] rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+                <span>{t('result.regenerating')}</span>
+              </>
+            ) : (
+              <>
+                <RefreshIcon className="h-4 w-4 shrink-0" />
+                <span>{t('result.regenerateButton')}</span>
+              </>
+            )}
+          </button>
+        </div>
       )}
 
       {receiptToken && <ReceiptStatus uuid={activeUuid} token={receiptToken} />}

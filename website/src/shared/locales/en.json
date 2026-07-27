@@ -177,7 +177,6 @@
     "regenerating": "Regenerating…",
     "regenerateFailed": "Regeneration failed, please retry",
     "regenerateNoPlaintext": "Plaintext needed to re-encrypt (auto-generate mode)",
-    "regenerateDisclosureHint": "Advanced · same plaintext, new key",
     "imMessageCardTitle": "Send via IM",
     "imMessageCardDescription": "To avoid IM auto-fetch burning the one-time secret, the link is given without the https:// prefix — recipient must prepend it manually or paste into a browser address bar.",
     "imMessageCopyButton": "Copy IM message",
