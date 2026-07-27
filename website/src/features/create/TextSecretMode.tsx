@@ -76,6 +76,17 @@ export default function TextSecretMode() {
   } | null>(null);
   const [receiptToken, setReceiptToken] = useState<string | undefined>();
 
+  // v8.3 (2026-07-27) — Tell Navbar when we're showing the Result view
+  // so the '再发一个' CTA appears (the URL is still '/', so path-based
+  // detection misses us). One-shot emit on every transition.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('onepass:result:show', {
+        detail: { show: !!result?.uuid },
+      }),
+    );
+  }, [result?.uuid]);
+
   // Live encrypt → CiphertextBox (only in auto mode and with a plaintext).
   useEffect(() => {
     let cancelled = false;

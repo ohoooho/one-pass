@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useConfig } from '../hooks/useConfig';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -26,9 +27,28 @@ export default function Navbar() {
   // and /s/:uuid (legacy short-link decrypt). Both end in 'result'
   // semantically: the user just produced a link and we want a quick
   // "再发一个" / "New secret" CTA in the nav.
-  const onResult =
+  const pathOnResult =
     location.pathname.startsWith('/secret') ||
     location.pathname.startsWith('/s/');
+
+  // v8.3 (2026-07-27) — The Create flow renders Result as an inline child
+  // of TextSecretMode/SelfEncryptedFileMode, so the URL stays at '/'. Path
+  // detection misses it. Create pages opt-in by dispatching
+  // `onepass:result:show` (detail = true|false) on result transitions.
+  // When the event fires we treat it as onResult for the nav CTA.
+  const [createFlowOnResult, setCreateFlowOnResult] = useState(false);
+  useEffect(() => {
+    function onResultShow(e: Event) {
+      const detail = (e as CustomEvent<{ show: boolean }>).detail;
+      if (!detail || typeof detail.show !== 'boolean') return;
+      setCreateFlowOnResult(detail.show);
+    }
+    window.addEventListener('onepass:result:show', onResultShow);
+    return () =>
+      window.removeEventListener('onepass:result:show', onResultShow);
+  }, []);
+
+  const onResult = pathOnResult || createFlowOnResult;
 
   return (
     <header
@@ -96,11 +116,7 @@ export default function Navbar() {
               {onResult && (
                 <a
                   href="#/"
-                  className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm font-semibold rounded-full text-white shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-                  }}
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm font-medium rounded-full text-[#4A95FF] bg-[#4A95FF]/10 hover:bg-[#4A95FF]/15 active:scale-[0.98] transition-all duration-200"
                   data-testid="nav-create-another"
                 >
                   <svg
@@ -156,11 +172,7 @@ export default function Navbar() {
             {onResult && (
               <a
                 href="#/"
-                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-white shadow-sm active:scale-[0.95] transition-all duration-200"
-                style={{
-                  background:
-                    'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-                }}
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-[#4A95FF] bg-[#4A95FF]/10 active:scale-[0.95] transition-all duration-200"
                 aria-label={t('nav.createAnother')}
                 data-testid="nav-create-another-mobile"
               >
