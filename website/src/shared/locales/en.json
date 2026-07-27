@@ -165,8 +165,6 @@
     "rowShortLinkDescription": "Requires the decryption key to be shared separately",
     "rowLabelDecryptionKey": "Decryption key",
     "rowDecryptionKeyDescription": "Required to decrypt the message with the short link",
-    "buttonCreateAnother": "Create another secret",
-    "backButton": "Back to home",
     "receiptTitle": "Read receipt",
     "receiptDescription": "This page updates automatically when the secret is opened. The status is available until the secret expires.",
     "receiptPending": "Not opened yet",
@@ -446,7 +444,8 @@
     "sloganEn": "Secure secret sharing, made simple",
     "mobileMenuLabel": "Menu",
     "mobileMenuClose": "Close menu",
-    "mobileMenuOpen": "Open menu"
+    "mobileMenuOpen": "Open menu",
+    "createAnother": "New secret"
   },
   "hero": {
     "title": "Encrypt message",

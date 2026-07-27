@@ -106,8 +106,13 @@ export default function App() {
           tabIndex={-1}
           className="w-full max-w-5xl wide:max-w-none mx-auto mb-auto px-4 sm:px-6 lg:px-8 wide:px-12 py-10 sm:py-14 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <div className="card bg-base-100 shadow-sm border border-base-300 lg:border-0 lg:shadow-none">
-            <div className="card-body p-5 sm:p-8 lg:p-0">
+          {/* Outer shell:
+                - <lg: rounded card with subtle border/shadow (compact layout needs the frame).
+                - ≥lg: spread-out layout — the shell must be COMPLETELY transparent and
+                  borderless, otherwise its white background + daisyUI default radius
+                  overlaps the inner ResultRow borders and looks ugly. */}
+          <div className="rounded-2xl bg-base-100 shadow-sm border border-base-300 lg:bg-transparent lg:border-0 lg:shadow-none lg:rounded-none">
+            <div className="p-5 sm:p-8 lg:p-0">
               {loginUnavailable && (
                 <div role="alert" className="alert alert-warning mb-6">
                   <svg

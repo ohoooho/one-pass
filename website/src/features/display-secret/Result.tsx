@@ -122,70 +122,13 @@ function Result({
   const activeOneClick = `${baseURL}/#/${prefix}/${activeUuid}/${activePassword}`;
   const activeShort = `${baseURL}/#/${prefix}/${activeUuid}`;
 
-  // v7 (2026-07-26) — top toolbar so the user always has an obvious
-  //  - "← 返回" on the left (back to home / new secret), and
-  //  - a prominent primary "再发一个" button on the right.
-  // Bottom ghost button removed (was easy to miss + ugly).
+  // v7.1 (2026-07-27) — toolbar removed.
+  //   The "← 返回首页" link was redundant (Navbar logo is already `href="#/"`).
+  //   The "+ 再发一个" button now lives in the Navbar (right side, only
+  //   visible on Result pages) — keeps the page uncluttered and avoids the
+  //   visual conflict with the outer card container.
   return (
     <>
-      {/* Top toolbar — always visible above the fold. */}
-      <div
-        className="flex items-center justify-between gap-3 mb-5 -mt-2"
-        data-testid="result-toolbar"
-      >
-        <a
-          href="#/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#3A2E5C]/65 hover:text-[#3A2E5C] transition-colors duration-150 rounded-lg px-2 py-1 -ml-2 hover:bg-white/60"
-          data-testid="result-back"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-4 h-4"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
-          </svg>
-          <span>{t('result.backButton')}</span>
-        </a>
-        <button
-          type="button"
-          onClick={() => {
-            window.location.href = '/';
-          }}
-          className="inline-flex items-center gap-1.5 px-4 h-10 text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]"
-          style={{
-            background: 'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
-            color: 'white',
-          }}
-          data-testid="result-create-another"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2.2}
-            stroke="currentColor"
-            className="w-4 h-4"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <span>{t('result.buttonCreateAnother')}</span>
-        </button>
-      </div>
-
       <div className="flex items-center gap-3 mb-2">
         <CheckCircleIcon className="h-7 w-7 text-success" />
         <h2 className="text-2xl font-bold text-[#3A2E5C]">{t('result.title')}</h2>

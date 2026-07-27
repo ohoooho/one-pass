@@ -165,8 +165,6 @@
     "rowShortLinkDescription": "需要单独把解密密钥发给对方",
     "rowLabelDecryptionKey": "解密密钥",
     "rowDecryptionKeyDescription": "用短链接时，需要这个密钥才能解密",
-    "buttonCreateAnother": "再发一个",
-    "backButton": "返回首页",
     "receiptTitle": "读取回执",
     "receiptDescription": "消息被打开时此页面自动更新，回执状态会保留到消息过期。",
     "receiptPending": "尚未打开",
@@ -446,7 +444,8 @@
     "sloganEn": "Secure secret sharing, made simple",
     "mobileMenuLabel": "菜单",
     "mobileMenuClose": "关闭菜单",
-    "mobileMenuOpen": "打开菜单"
+    "mobileMenuOpen": "打开菜单",
+    "createAnother": "再发一个"
   },
   "hero": {
     "title": "加密消息",
