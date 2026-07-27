@@ -71,7 +71,6 @@
     "keyWaitingPlaceholder": "Click \"Regenerate\" on the right to get a new key",
     "cipherWaitingPlaceholder": "After you click \"Encrypt Message\" below, the ciphertext will appear here",
     "encryptingMessage": "Encrypting…",
-    "buttonDisabledHint": "Type your plaintext above first",
     "errorNoKey": "Enter a key first",
     "errorNoPlaintext": "Enter the content to encrypt first",
     "errorGeneric": "Encryption failed, please retry",
