@@ -22,6 +22,13 @@ export default function Navbar() {
   const onAbout = location.pathname === '/about';
   const onText = location.pathname === '/' || location.pathname === '';
   const onFile = location.pathname.startsWith('/file');
+  // Result pages live at /secret/:prefix/:uuid/:password (decrypt)
+  // and /s/:uuid (legacy short-link decrypt). Both end in 'result'
+  // semantically: the user just produced a link and we want a quick
+  // "再发一个" / "New secret" CTA in the nav.
+  const onResult =
+    location.pathname.startsWith('/secret') ||
+    location.pathname.startsWith('/s/');
 
   return (
     <header
@@ -86,6 +93,34 @@ export default function Navbar() {
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* About + Settings — desktop only (mobile gets them via drawer). */}
             <div className="hidden lg:flex items-center gap-1 sm:gap-2">
+              {onResult && (
+                <a
+                  href="#/"
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm font-semibold rounded-full text-white shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+                  }}
+                  data-testid="nav-create-another"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.2}
+                    stroke="currentColor"
+                    className="w-[18px] h-[18px]"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  <span>{t('nav.createAnother')}</span>
+                </a>
+              )}
               <a
                 href="#/about"
                 className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
@@ -118,6 +153,34 @@ export default function Navbar() {
                 and passes the open state via a window CustomEvent. We just
                 render the trigger here; the trigger ID is what App listens
                 to. */}
+            {onResult && (
+              <a
+                href="#/"
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-white shadow-sm active:scale-[0.95] transition-all duration-200"
+                style={{
+                  background:
+                    'linear-gradient(135deg, #4A95FF 0%, #5BB5FF 100%)',
+                }}
+                aria-label={t('nav.createAnother')}
+                data-testid="nav-create-another-mobile"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2.2}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </a>
+            )}
             <button
               type="button"
               className="lg:hidden p-2 rounded-full hover:bg-white/70 transition-all duration-200 text-[#3A2E5C]/75 hover:text-[#3A2E5C]"
