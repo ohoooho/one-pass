@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { useConfig } from '../hooks/useConfig';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -49,6 +49,23 @@ export default function Navbar() {
   }, []);
 
   const onResult = pathOnResult || createFlowOnResult;
+
+  // v8.3b (2026-07-27) — "再发一个" needs to clear the create flow's
+  // result state when the URL is already at '/' (Create mode showing
+  // Result). A bare <a href="#/"> won't trigger anything because the
+  // hash hasn't changed. We emit a CustomEvent; TextSecretMode /
+  // SelfEncryptedFileMode listen and call setResult(null). Triggered
+  // BEFORE the navigation so the navigation isn't observed.
+  function onCreateAnother(e: ReactMouseEvent) {
+    if (createFlowOnResult) {
+      e.preventDefault();
+      window.dispatchEvent(
+        new CustomEvent('onepass:result:show', { detail: { show: false } }),
+      );
+      // Also tell the create flow to clear its own copy of the result.
+      window.dispatchEvent(new CustomEvent('onepass:create-another'));
+    }
+  }
 
   return (
     <header
@@ -116,6 +133,7 @@ export default function Navbar() {
               {onResult && (
                 <a
                   href="#/"
+                  onClick={onCreateAnother}
                   className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm font-medium rounded-full text-[#4A95FF] bg-[#4A95FF]/10 hover:bg-[#4A95FF]/15 active:scale-[0.98] transition-all duration-200"
                   data-testid="nav-create-another"
                 >
@@ -172,6 +190,7 @@ export default function Navbar() {
             {onResult && (
               <a
                 href="#/"
+                onClick={onCreateAnother}
                 className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full text-[#4A95FF] bg-[#4A95FF]/10 active:scale-[0.95] transition-all duration-200"
                 aria-label={t('nav.createAnother')}
                 data-testid="nav-create-another-mobile"
