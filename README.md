@@ -2,6 +2,13 @@
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Forked from](https://img.shields.io/badge/forked%20from-jhaals%2Fyopass-orange.svg)](https://github.com/jhaals/yopass)
+[![Demo](https://img.shields.io/badge/demo-one--pass.ohoooho.com-brightgreen)](https://one-pass.ohoooho.com)
+[![i18n](https://img.shields.io/badge/i18n-zh--CN%20%2B%208%20others-blue)](website/src/shared/locales)
+
+> **Secure secret sharing, made simple.**
+> 浏览器本地 OpenPGP 加密，密钥不到服务端；一行命令自托管；
+> IM 友好（飞书/钉钉/Slack/Telegram 直接发）。
+> Fork 自 [jhaals/yopass](https://github.com/jhaals/yopass)，**默认中文** + 8 种语言。
 
 🔐 **one-pass** 是 [jhaals/yopass](https://github.com/jhaals/yopass) 的 fork，
 专门为桃仙 / Dopple 客户打造。核心改动是 **透明加密 UI**：用户在浏览器里
