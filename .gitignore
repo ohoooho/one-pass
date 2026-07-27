@@ -22,14 +22,21 @@ website/test-results/
 *.test
 *.out
 
-# Build artifacts
-website/node_modules/
-website/dist/
-cmd/onepass/onepass-server
-onepass-server
-*.zip
-*.tar.gz
-.DS_Store
-
 # Bundle
 *.bundle
+
+# ==========================================
+# 私域内容（不推 GitHub，内部留本地）
+# ==========================================
+
+# CC 任务说明（含 token / 推送目标 / 工作路径等私域）
+CC-PROMPT*.md
+
+# 推广文案（内部私有，不公开）
+website/docs/PROMO.md
+PROMO.md
+
+# UI 协作产物（任务书 / 执行命令 / 截图）
+docs/IMPROVE-UI-BRIEF.md
+docs/PROMPT-UI.md
+docs/IMPROVE-UI-*
