@@ -157,7 +157,7 @@
     "subtitle": "Your secret has been encrypted and stored. Share these links to provide access.",
     "subtitleDownloadOnce": "Secret can only be downloaded once. So do not open the link yourself. The cautious should send the decryption key in a separate communication channel.",
     "reminderTitle": "Remember",
-    "rowLabelOneClick": "One-click link",
+    "rowLabelOneClick": "One-click copy",
     "rowOneClickDescription": "Share this link for direct access to the secret",
     "rowLabelShortLink": "Short link",
     "rowShortLinkDescription": "Requires the decryption key to be shared separately",

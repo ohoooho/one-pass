@@ -157,7 +157,7 @@
     "subtitle": "消息已在你的浏览器本地加密并上传，分享链接给对方即可。",
     "subtitleDownloadOnce": "消息只能打开一次。不要自己先点链接。谨慎起见，可把密钥用另一个渠道单独发送。",
     "reminderTitle": "提醒",
-    "rowLabelOneClick": "一键链接",
+    "rowLabelOneClick": "一键复制",
     "rowOneClickDescription": "分享这个链接，对方直接打开就能查看",
     "rowLabelShortLink": "短链接",
     "rowShortLinkDescription": "需要单独把解密密钥发给对方",
