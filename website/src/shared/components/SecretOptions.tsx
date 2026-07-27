@@ -106,23 +106,61 @@ export function SecretOptions<T extends SecretFormFields>({
       )}
       <div className="mt-5 space-y-2">
         {!config?.FORCE_ONETIME_SECRETS && (
-          <label className="cursor-pointer flex items-center space-x-3 p-2 rounded-md hover:bg-base-200 transition-colors">
-            <input
-              type="checkbox"
-              className="checkbox checkbox-primary"
-              {...register('oneTime')}
-              checked={oneTime}
-              onChange={() => setOneTime(!oneTime)}
-            />
-            <span className="label-text font-medium">
-              {t('create.inputOneTimeLabel')}
-            </span>
-            <InfoPopover
-              titleKey="create.infoA3Title"
-              bodyKey="create.infoA3Body"
-              side="right"
-            />
-          </label>
+          <>
+            <label className="cursor-pointer flex items-center space-x-3 p-2 rounded-md hover:bg-base-200 transition-colors">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                {...register('oneTime')}
+                checked={oneTime}
+                onChange={() => setOneTime(!oneTime)}
+              />
+              <span className="label-text font-medium">
+                {t('create.inputOneTimeLabel')}
+              </span>
+              <InfoPopover
+                titleKey="create.infoA3Title"
+                bodyKey="create.infoA3Body"
+                side="right"
+              />
+            </label>
+            {/* v8.5 (2026-07-27) — Inline IM warning.
+                 Burn-after-reading links shared via chat apps get
+                 pre-fetched server-side by the IM client (link-unfurl
+                 preview), which burns the secret on the very first GET
+                 — the recipient opens an already-gone link. Inline
+                 warning (not a modal) so the user sees it before
+                 clicking the Submit button without interrupting flow. */}
+            {oneTime && (
+              <div
+                role="alert"
+                className="ml-8 mt-1 mb-2 flex items-start gap-2 rounded-lg px-3 py-2 text-xs leading-relaxed"
+                style={{
+                  background: 'rgba(254, 226, 226, 0.55)',
+                  border: '1px solid #FCA5A5',
+                  color: '#B91C1C',
+                }}
+                data-testid="onetime-im-warning"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.8}
+                  stroke="currentColor"
+                  className="h-4 w-4 shrink-0 mt-0.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                  />
+                </svg>
+                <span>{t('create.inputOneTimeIMWarning')}</span>
+              </div>
+            )}
+          </>
         )}
         {config?.OIDC_ENABLED && (
           <label className="cursor-pointer flex items-center space-x-3 p-2 rounded-md hover:bg-base-200 transition-colors">
