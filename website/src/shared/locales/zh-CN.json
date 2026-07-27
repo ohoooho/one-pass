@@ -12,7 +12,7 @@
     "inputCustomPasswordLabel": "自定义密钥",
     "inputCustomPasswordPlaceholder": "输入你自己的密钥…",
     "inputOneTimeLabel": "阅后即焚（只能打开一次）",
-    "inputOneTimeIMWarning": "不建议在 IM（微信/飞书/钉钉/Slack/Telegram）里分享阅后即焚链接 — IM 会预检链接，让密文在对方打开前就失效。需要 IM 分享请取消勾选。",
+    "inputOneTimeIMWarning": "IM 预检会触发销毁 — 需要 IM 分享请取消勾选",
     "inputGenerateKeyLabel": "随机生成密钥",
     "inputRequireAuthLabel": "需要登录才能打开",
     "inputReadReceiptLabel": "读取回执（追踪消息是否被查看）",

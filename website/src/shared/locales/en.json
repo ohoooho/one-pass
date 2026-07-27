@@ -7,7 +7,7 @@
     "inputCustomPasswordLabel": "Custom Password",
     "inputCustomPasswordPlaceholder": "Enter your password...",
     "inputOneTimeLabel": "One-time download",
-    "inputOneTimeIMWarning": "Don't share burn-after-reading links via IM (WeChat / Feishu / DingTalk / Slack / Telegram) — IM clients auto-fetch shared URLs server-side, which burns the secret before the recipient clicks. Uncheck this when sharing through chat.",
+    "inputOneTimeIMWarning": "IM auto-fetch burns it — uncheck if sharing via chat",
     "inputGenerateKeyLabel": "Generate decryption key",
     "inputRequireAuthLabel": "Require authentication to open",
     "inputReadReceiptLabel": "Read receipt (track when the secret is opened)",
