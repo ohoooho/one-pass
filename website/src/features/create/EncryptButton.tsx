@@ -9,12 +9,15 @@ interface EncryptButtonProps {
 }
 
 /**
- * The main "生成链接" button.
+ * The main "生成分享链接" button.
  *
  * v5 (2026-07-24):
  *  - Renamed from 加密消息 → 生成链接 (Yopass original).
  *  - Switched LockIcon → LinkIcon to match the new wording.
  *  - Kept the InfoPopover (still useful — explains what the link will look like).
+ *
+ * v8.1 (2026-07-27): dropped `buttonDisabledHint` subtext — the disabled
+ * button itself + the textarea placeholder are enough.
  */
 export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProps) {
   const { t } = useTranslation();
@@ -51,11 +54,9 @@ export function EncryptButton({ loading, disabled, onSubmit }: EncryptButtonProp
           </>
         )}
       </button>
-      {!loading && disabled && (
-        <p className="text-xs text-[#3A2E5C]/50 mt-2 text-center">
-          {t('create.buttonDisabledHint')}
-        </p>
-      )}
+      {/* v8.1 (2026-07-27) — drop the "请先在上方输入明文" subtext. The
+          disabled button itself + the placeholder text on the textarea
+          already say it; the extra line was just noise. */}
     </div>
   );
 }

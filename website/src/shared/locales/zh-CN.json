@@ -71,7 +71,6 @@
     "keyWaitingPlaceholder": "点击右侧「重新生成」按钮可换一个密钥",
     "cipherWaitingPlaceholder": "点击下方「加密消息」按钮后，密文会显示在此处",
     "encryptingMessage": "正在加密…",
-    "buttonDisabledHint": "请先在上方输入明文",
     "errorNoKey": "请先输入密钥",
     "errorNoPlaintext": "请先输入要加密的内容",
     "errorGeneric": "加密失败，请重试",
