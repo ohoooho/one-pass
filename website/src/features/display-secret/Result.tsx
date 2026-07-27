@@ -123,19 +123,37 @@ function Result({
   const activeShort = `${baseURL}/#/${prefix}/${activeUuid}`;
 
   // v8.2 (2026-07-27) — "Copy IM message" template.
-  // IM clients (WeChat / Slack / DingTalk / Telegram) auto-fetch shared
-  // URLs server-side for link previews, which:
-  //   1. burns one-time secrets before the recipient clicks,
-  //   2. renders a bare URL as an unscary/untrustworthy card,
-  //   3. leaks to the recipient that "this is just a link", with no
-  //      context that it's an encrypted secret.
-  // We hand the sender a formatted block they can paste verbatim:
-  // title + link + (oneTime warn | open hint) + footer.
+  // v8.4 (2026-07-27) — Avoid putting the bare URL in the message body.
+  //   IM clients (WeChat / Slack / DingTalk / Telegram) pattern-match
+  //   `http(s)://...` server-side for link unfurls/previews, which:
+  //     1. burns one-time secrets before the recipient clicks,
+  //     2. renders a bare URL as an unscary/untrustworthy card,
+  //     3. leaks to the recipient that "this is just a link", with no
+  //        context that it's an encrypted secret.
+  //   Strategy: strip the protocol from the URL, and tell the recipient
+  //   to prepend `https://` themselves (or paste into a browser bar
+  //   that auto-completes). IM auto-fetchers don't pattern-match a
+  //   bare `one-pass.ohoooho.com/#/secret/...` string.
+  //
+  //   Sender sees:
+  //     - title
+  //     - "IM 会预检链接，阅后即焚会失效 / 不可信卡片" — *why* not
+  //       paste the link raw
+  //     - "这是 https 协议链接" — the missing piece
+  //     - bare URL (no protocol) — the thing to paste
+  //     - (oneTime warn | open hint)
+  //     - footer
   const imMessage = useMemo(() => {
+    const protocol = activeOneClick.startsWith('https://') ? 'https://' : 'http://';
+    const bareLink = activeOneClick.slice(protocol.length);
     const lines: string[] = [
       t('result.imMessageTitle'),
       '',
-      t('result.imMessageLink', { link: activeOneClick }),
+      t('result.imMessageWhyNoLink'),
+      '',
+      t('result.imMessageProtocolHint', { protocol: protocol.replace('://', '') }),
+      '',
+      bareLink,
       '',
       oneTime
         ? t('result.imMessageOneTimeWarn')
