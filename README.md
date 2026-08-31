@@ -352,8 +352,7 @@ cd website && yarn dev   # http://localhost:5173
 
 - **协议**：Apache-2.0（与原版 Yopass 一致）
 - **原项目**：<https://github.com/jhaals/yopass>
-- **本仓库**：<https://git.dbhys.com/ohoooho/one-pass>
-- **GitHub 镜像**：<https://github.com/ohoooho/one-pass>
+- **GitHub 仓库**：<https://github.com/ohoooho/one-pass>
 - **NOTICE 文件**：见 [NOTICE](NOTICE)
 
 ## 关联项目

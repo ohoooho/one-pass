@@ -117,12 +117,12 @@ export default function About() {
           <li>
             {t('about.promise4')}{' '}
             <a
-              href="https://git.dbhys.com/ohoooho/one-pass"
+              href="https://github.com/ohoooho/one-pass"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary underline"
             >
-              git.dbhys.com/ohoooho/one-pass
+              github.com/ohoooho/one-pass
             </a>
             （{t('about.apacheLicense')}）
           </li>

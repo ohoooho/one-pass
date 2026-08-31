@@ -39,7 +39,7 @@ Web UI simplification + IM-sharing adaptations. **Milestone tag.**
 
 _(tracked in commit history until the next milestone)_
 
-[v8.0.0]: https://git.dbhys.com/ohoooho/one-pass/compare/51ecc32...v8.0.0
+[v8.0.0]: https://github.com/ohoooho/one-pass/compare/51ecc32...v8.0.0
 
 ## [v8.0.1] — 2026-07-27
 
@@ -51,4 +51,4 @@ Hotfix on top of the v8 milestone tag.
 ### Fixed
 - **English nav brand** (v8.7). See Fixed section in v8.0.0.
 
-[v8.0.1]: https://git.dbhys.com/ohoooho/one-pass/compare/v8.0.0...v8.0.1
+[v8.0.1]: https://github.com/ohoooho/one-pass/compare/v8.0.0...v8.0.1

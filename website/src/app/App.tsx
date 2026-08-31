@@ -236,7 +236,7 @@ export default function App() {
               <span className="text-base-content/70">
                 &copy; 2026{' '}
                 <a
-                  href="https://git.dbhys.com/ohoooho/one-pass"
+                  href="https://github.com/ohoooho/one-pass"
                   className="text-primary hover:text-primary-focus font-medium transition-colors duration-200 underline decoration-dotted underline-offset-4 hover:decoration-solid"
                   target="_blank"
                   rel="noopener noreferrer"
